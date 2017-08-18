@@ -1,0 +1,1990 @@
+#+TITLE: Emacs Handbook
+
+*本人为学习使用Emacs而翻译此文档，勿作它用。*
+*原文档链接为：http://ergoemacs.org/emacs/emacs.html*
+
+
+* 快速上手
+
+** 程序下载
+
+TO BE DONE
+
+** Emacs首日
+
+- 在文本终端使用Emacs
+
+  TO BE DONE
+
+** Emacs之乐趣
+
+TO BE DONE
+
+** Emacs按键基础
+
+*** 快捷键基础
+
+- *按键说明*
+
+ | Key      | Description                 |
+ |----------+-----------------------------|
+ | C-       | 按住Control键               |
+ | M-       | 按住Alt键                   |
+ | S-       | 按住Shift键                 |
+ | DEL      | Backspace键(不是Del键)      |
+ | RET      | 回车键，及，Return或者Enter |
+ | SPC      | 空格键                      |
+ | ESC      | Escape键                    |
+ | TAB      | Tab键                       |
+ | <f3>     | F3                          |
+ | <kp-3>   | 数字键盘上的“3”             |
+ | <insert> | Ins                         |
+ | <delete> | Del                         |
+ | <home>   | Home                        |
+ | <end>    | End                         |
+ | <next>   | Page Down                   |
+ | <prior>  | Page Up                     |
+ | <left>   | 左方向键                    |
+ | <right>  | 右方向键                    |
+ | <up>     | 上方向键                    |
+ | <down>   | 下方向键                    |
+
+ 方向键： ←, →,  ↑,  ↓
+
+- *文件操作：Open、Save、Close*
+
+ | Key     | Command Name | Purpose              |
+ |---------+--------------+----------------------|
+ | C-x C-f | find-file    | 打开一个新文件       |
+ | C-x C-s | save-buffer  | 保存文件             |
+ | C-x k   | kill-buffer  | 关闭当前文件的缓冲区 |
+
+- *移动光标*
+
+ | Key              | Command Name               | Purpose              |
+ |------------------+----------------------------+----------------------|
+ | C-<left>或者M-b  | left-word or backward-word | 向左移动一个词的距离 |
+ | C-b              | backward-char              | 向左移动一个字符     |
+ | C-<right>或者M-f | right-word or forward-word | 向右移动一个词的距离 |
+ | C-f              | forward-char               | 向右移动一个字符     |
+ | C-p              | previous-line              | 向上移动一行         |
+ | C-n              | next-line                  | 向下移动一行         |
+ | C-a              | back-to-indentation        | 行首                 |
+ | C-e              | move-end-of-line           | 行尾                 |
+ | C-v              | scroll-up-command          | 向下翻页             |
+ | M-v              | scroll-down-command        | 向上翻页             |
+ | M-<              | beginning-of-buffer        | 文件起始位置         |
+ | M->              | end-of-buffer              | 文件结尾位置         |
+
+- *删除文本*
+
+ | Key   | Command Name       | Purpose                    |
+ |-------+--------------------+----------------------------|
+ | M-d   | kill-word          | 向右删除一个词             |
+ | M-DEL | backward-kill-word | 删除前一个词               |
+ | C-k   | kill-line          | 删除从光标至行尾的所有字符 |
+
+- *选择文本*
+
+ | Key   | Command Name      | Purpose                                            |
+ |-------+-------------------+----------------------------------------------------|
+ | C-SPC | set-mark-command  | 为copy/cut标记起始位置。(然后移动光标确定选择区域) |
+ | C-x h | mark-whole-buffer | 全选                                               |
+
+- *复制、粘贴、撤销*
+
+ | Key                 | Command Name   | Purpose                              |
+ |---------------------+----------------+--------------------------------------|
+ | C-/或者C-x u或者C-_ | undo           | 撤销(redo，输入任意字符然后undo两次) |
+ | M-w                 | kill-ring-save | 复制                                 |
+ | C-w                 | kill-region    | 剪切                                 |
+ | C-y                 | yank           | 粘贴                                 |
+
+- *切分窗口* <<SplitWindowsBasics>>
+
+ | Key        | Command Name           | Purpose                |
+ |------------+------------------------+------------------------|
+ | C-x 2      | split-window-below     | 上下切分               |
+ | C-x 3      | split-window-right     | 左右切分               |
+ | C-x 1      | delete-other-windows   | 移除其余窗口           |
+ | C-x o      | other-window           | 移动光标至其它窗口     |
+ | C-x 0      | delete-window          | 移除当前窗口           |
+ | C-x 4 f    | find-file-other-window | 在其它窗口打开文件     |
+ | C-x 4 0    | kill-buffer-and-window | 关闭当前缓冲区和窗口   |
+ | C-x 5 2    | make-frame-command     | 新建frame              |
+ | C-x 5 f    | find-file-other-frame  | 在新frame中打开文件    |
+ | C-x 5 0    | delete-frame           | 关闭当前frame          |
+ | C-c <left> | winner-undo            | 回到上一个窗口布局设置 |
+
+*** Emacs的原则
+
+- *所有东西都是命令*
+
+ 在emacs中，每次按下一个键都会执行一条命令。例如，在你按下“e”键的时候，emacs实际上执行了self-insert-command命令。
+ 你所按下的任意一个键或者多个键的顺序组合最终都会执行一条命令。
+ 在默认情况下，emacs中有3000多条命令。
+ 很多经常会用到的命令都有其对应的快捷键，诸如移动光标，打开文件，复制粘贴，关闭文件，搜索文本之类。
+ 如果需要按照名称执行命令，按M-x，然后输入命令的名称。
+
+ | Shortcut | Command Name             | Description                                    |
+ |----------+--------------------------+------------------------------------------------|
+ | M-x      | execute-extended-command | 按照名称执行命令                               |
+ | C-g      | keyboard-quit            | 取消执行中的命令，或者取消未完成的按键组合输入 |
+
+- *查找命令名称或者快捷键*
+
+ 如果知道一个命令的名称，那你就可以找到它所对应的快捷键（如果有的话）。调用describe-function。
+ 如果知道一个快捷键，那你就可以找到它会执行的命令。调用describe-key。
+
+ | Shortcut | Command Name      | Description          |
+ |----------+-------------------+----------------------|
+ | C-h k    | describe-key      | 查找快捷键对应的命令 |
+ | C-h f    | describe-function | 查找命令对应的快捷键 |
+
+** 高级技巧
+
+*** Emacs高级技巧
+
+- *如何搜索文本？*
+
+  1. 按C-s（isearch-forward），然后输入需要搜索的内容。Emacs会随着你的输入进行搜索。
+  2. 若要跳至下一个出现位置，再按一次C-s。
+  3. 若要跳至上一个出现位置，按C-r。
+  4. 若要停止搜索，按回车键，光标会停留在当前位置。
+  5. 若要回到搜索操作开始前的位置，按C-g。
+
+  按两次C-s会搜索你上一次所搜索的内容。
+
+- *如何进行查找/替换？*
+
+ 按M-%（query-replace）。Emacs会提示你输入查找字符串和替换字符串。
+ 一旦emacs查找到一个匹配，你可以按“y”进行替换，按“n”忽略，或者按“!”进行全部替换而不再询问你。
+ 如果你做了错误的操作，可以按C-g取消。如果你想回复所做的查找/替换操作，按C-/进行undo。
+
+- *如何对一个文件夹内的所有文件进行查找/替换操作？*
+
+  1. 调用dired命令进入一个文件夹。
+  2. 标记你要操作的文件（按“m”进行标记，按“u”取消标记）。
+  3. 调用命令dired-do-query-replace-regexp（按“Q”）。
+
+*** 与编辑相关的问题
+
+- *如何插入/删除注释？*
+
+  1. 选择一块文本。（调用set-mark-command或按C-SPC进行标记，然后移动光标。）
+  2. 调用comment-dwim (M-;)对区域（region）进行注释或取消注释。
+
+- *如何为每一行都添加前缀？（诸如“#”或者“//”）*
+
+  1. 将光标移动至你所要操作的第一行的起始位置。
+  2. 按C-SPC（set-mark-command）标记光标位置。
+  3. 将光标移动至最后一行的起始位置。
+  4. 调用string-rectangle（C-x r t）。
+  5. 输入你想插入的内容，然后按回车键。
+
+  命令string-rectangle可以在跨越了多个行的任意列位置处插入一个字符串的垂直列，而不是仅仅限于行的起始位置。
+
+- *如何删除每一行的前n个字符？*
+
+ 在第一行的起始位置做标记（C-SPC）然后将光标移动至最后一行，之后再向右移动n个字符。然后调用kill-rectangle（C-x r k）。
+ 命令kill-rectangle可以删除任意位置的矩形区块文本，而不是仅仅限于行的起始位置。
+
+- *如何替换不可打印的字符，例如tab或者newline？*
+
+  1. 按M-%调用query-replace。
+  2. 输入要查找的tab：先按C-q（quoted-insert）再按tab键。（先按C-q再按enter键来输入newline）
+  3. 输入要替换的内容，然后按回车键。
+
+- *如何在驼峰式命名法的词中移动光标？*
+
+ 可以设置emacs让逐词移动命令（例如C-<left>和M-b）将光标在驼峰式命名词中间移动。
+ 调用global-subword-mode。Subword模式自Emacs 23.2(2010-05-08)可用。
+ 可以在.emacs文件中进行设置，使其永久有效：(global-subword-mode 1) ; 1 for on, 0 for off
+
+** 少为人知的技巧
+
+这里列出了每个emacs用户都应该知道的4个命令。
+
+- describe-key：查找键盘快捷键对应的命令名称。
+- describe-function：查找命令所对应的快捷键。
+- apropos-command：按名称查找命令。
+- describe-mode：当前缓冲区所用模式文档。
+
+*** 与编辑相关的
+
+- *如何搜索与前次搜索相同的字符串？*
+
+ 按C-s C-s直接对前次所搜索内容重新进行一次搜索。
+
+- *如何直接搜索光标所处位置的字符串？*
+
+ 按C-s C-w直接搜索光标所处位置的单词。你可以通过多次按C-w来扩展所选内容。
+
+- *如何列出所有包含特定字符串的行？*
+
+  + list-matching-lines
+  + delete-matching-lines
+  + delete-non-matching-lines
+  + delete-duplicate-lines (Emacs 24.4)
+
+- *如何在文件中高亮显示所有出现特定内容的位置？*
+
+  + highlight-phrase
+  + highlight-regexp
+  + highlight-lines-matching-regexp
+
+- *如何对多行排序？*
+
+ 首先选择一个区域（多行），然后调用sort-lines（升序）。调用reverse-region对区域内的行进行反转。
+ 如果要按特定列对行进行排序，使用sort-fields（升序）或者sort-numeric-fields（对数字列按升序排序，对字符串不起作用）。（其中“fields”应该是由空格或者tab所分割的。第一个field是1，而不是0。）
+ 例如：按C-u 2，然后按M-x sort-numeric-fields。此操作会依据第2列的数字对行进行排序。
+
+- *如何在源码中删除行尾的多余空白？（trailing white spaces）*
+
+ 调用delete-trailing-whitespace命令对整个缓冲区进行操作。
+
+- *如何让空格和tab可见？*
+
+ 调用whitespace-mode命令。
+
+- *我有几组需要经常粘贴的文本，有类似于“多剪贴板”的方法吗？*
+
+  + 选择一个文本区域，然后调用copy-to-register命令（C-x r s），用一个字符为之命名，诸如“1”或者“a”之类。
+  + 调用insert-register（C-x r i）命令对其进行粘贴。
+
+ 如果存在需要经常粘贴的文本（例如，XML模板或者签名），你应该为其设置缩略形式（abbreviation，采用abbrev-mode）。
+
+*** 杂项
+
+- *在向emacs初始化文件添加代码的时候如何避免重启emacs？*
+
+  + 选中新添加的lisp代码，然后调用eval-region。
+  + 调用eval-buffer来运行当前文件的所有代码。
+  + 调用load-file。或者，在dired中，在该文件名上按“L”（dired-do-load）。
+
+- *如何启动第二个shell？*
+
+ 先调用universal-argument（C-u），像这样：C-u M-x shell。或者，也可以将已有的shell缓冲区进行重命名，然后再次执行shell命令。
+
+- *如何“刷新”一个已经打开的文件至其当前所保存的状态？例如，其他用户已经通过网络编辑了这个文件。*
+
+ 调用revert-buffer命令。如果有人修改了这个文件，通常emacs会检测到，在你向其输入内容的时候，emacs会自动询问你所要进行的操作。
+
+ #+BEGIN_SRC emacs-lisp
+   ;; set file to auto refresh when change detected (For example, changed by other)
+   (global-auto-revert-mode 1)
+ #+END_SRC
+
+- *我有一个“.info”文件，如何将其作为info打开？*
+
+ 调用universal-argument命令（C-u），然后调用info命令（C-h i），然后输入info文件的名称。
+
+- *有什么方法可以让emacs将文件解析为十六进制数？（i.e. byte-code编辑器）*
+
+ 要将文件作为十六进制数的格式打开，调用hexl-find-file。如果文件已经被打开了，调用hexl-mode命令。
+
+- *如何为新窗口设置背景色？*
+
+ 将下边的内容加入emacs的初始化文件：
+
+ #+BEGIN_SRC emacs-lisp
+   (setq default-frame-alist
+         '((background-color . "cornsilk")))
+ #+END_SRC
+
+ 调用list-colors-display命令可以查看emacs所支持的颜色名称列表。
+
+** Emacs在Windows下的常见问题
+
+TO BE DONE
+
+
+** 让Emacs使用现代的用户界面
+
+TO BE DONE
+
+* 文件
+
+** 切分窗口基础
+
+在emacs手册中：“window”的意思是buffer所处的pane；“frame”的意思是emacs程序在操作系统中打开的窗口。常用快捷键请参考[[SplitWindowsBasics][切分窗口操作]]部分。
+
+- *为切分窗口定义其它快捷键*
+
+ 可以为常用的窗口切分操作定义更方便的快捷键。可以将如下代码加入emacs的初始化文件中。（个人认为没这个必要）
+
+ #+BEGIN_SRC emacs-lisp
+   ;; easy keys for split windows
+   (global-set-key (kbd "M-3") 'delete-other-windows) ; [Alt+3] unsplit all
+   (global-set-key (kbd "M-4") 'split-window-below)
+   (global-set-key (kbd "M-$") 'split-window-right)
+   (global-set-key (kbd "M-RET") 'other-window) ; [Alt+Return] move cursor to next pane
+   (global-set-key (kbd "M-0") 'delete-window)  ; remove current pane
+ #+END_SRC
+
+- *调整切分窗口的尺寸*
+
+ 通常可以通过鼠标拖动窗口底部的状态栏来调整窗口的尺寸，或者，你也可以通过快捷键来完成这些操作。
+
+ | Command                             | Key   | Purpose                      |
+ |-------------------------------------+-------+------------------------------|
+ | enlarge-window                      | C-x ^ | 增加高度                     |
+ | shrink-window                       |       | 减少高度                     |
+ | enlarge-window-horizontally         | C-x } | 增加宽度                     |
+ | shrink-window-horizontally          | C-x { | 减少宽度                     |
+ | shrink-window-if-larger-than-buffer | C-x - | 减少窗口的高度以适应它的内容 |
+ | balance-windows                     | C-x + | 使所有窗口的高度/宽度相同    | 
+
+ 这些命令中的大部分都可以接收参数。可以先调用universal-argument（C-u）命令然后输入一个数字，再调用调整窗口的命令。
+ 如果你经常会用到这些命令，可以考虑给它们定义一个更方便的快捷键。  
+
+** 列示缓冲区
+
+在emacs中，每个文件都是在缓冲区（buffer）中显示的。两个常用的缓冲区命令是：list-buffers（C-x C-b）和switch-to-buffer（C-x b）。
+
+- *列示缓冲区：ibuffer命令*
+
+ 命令ibuffer是list-buffers的改进版本，它将文件按照类型进行分色显示。
+ 可以将下列代码加入emacs初始化文件使ibuffer作为默认缓冲区列示命令：
+
+ #+BEGIN_SRC emacs-lisp
+   (defalias 'list-buffers 'ibuffer) 
+ #+END_SRC
+
+- *批量处理缓冲区*
+
+ 你可以对已标记的缓冲区做批量处理，例如，保存所有未保存的文件、关闭指定目录的所有文件、关闭所有Java文件。
+ 可以调用describe-mode命令查看ibuffer的全部命令列表。
+ 常用命令如下：
+
+ | Key | Purpose              |
+ |-----+----------------------|
+ | m   | Mark                 |
+ | u   | Unmark               |
+ | * u | Mark unsaved         |
+ | S   | Save marked buffer   |
+ | D   | Close marked buffers | 
+
+ 在ibuffer中，快捷键“* u S D”会将未保存的文件进行保存然后将其关闭。这在使用dired-do-query-replace-regexp命令对很多文件进行了查找/替换操作之后非常有用。  
+
+** 缓冲区切换
+
+进行缓冲区切换的命令是：switch-to-buffer（C-x b）。更方便的方式是使用ido-mode中的ido-switch-buffer。
+
+- *缓冲区切换：ido-mode*
+
+ 我现在基本不会使用“C-x b”做缓冲区切换，而是使用tabbar插件，很方便的。
+ 关于ido-mode，可以查看：http://ergoemacs.org/emacs/emacs_buffer_switching.html
+
+** Dired基础
+
+Emacs是一个做文件管理的优秀工具。例如：文件列表、复制/删除、重命名、移动、创建/删除目录等。一旦能熟练的使用它，你基本上就不需要到shell或者操作系统桌面去进行这些操作了。
+
+- *复制、删除和重命名文件*
+
+ 调用dired命令开始查看目录。
+ 在处于dired中的时候，大多命令都对应一个单字符快捷键。
+
+ | Key | Command                | Purpose                                                              |
+ |-----+------------------------+----------------------------------------------------------------------|
+ | RET | dired-find-file        | 打开文件或目录                                                       |
+ | q   | quit-window            | 完成。显示上一个缓冲区。（如果要关闭dired缓冲区，调用kill-buffer。） |
+ | C   | dired-do-copy          | 复制文件                                                             |
+ | R   | dired-do-rename        | 重命名/移动文件                                                      |
+ | D   | dired-do-delete        | 删除文件或目录                                                       |
+ | +   | dired-create-directory | 新建一个目录                                                         |
+ | Z   | dired-do-compress      | 使用gzip对文件进行压缩或解压缩                                       |
+
+- *标记/取消标记多个文件*
+
+ 有时候需要复制或者删除多个文件，你可以先对这些文件进行标记，然后对所有已标记的文件执行命令。
+
+ | Key | Command                 | Purpose            |
+ |-----+-------------------------+--------------------|
+ | m   | dired-mark              | 标记文件           |
+ | u   | dired-unmark            | 取消标记           |
+ | U   | dired-unmark-all-marks  | 取消所有的标记     |
+ | % m | dired-mark-files-regexp | 用正则规则进行标记 |
+
+ 例如，如果想要标记所有html文件，按“% m”，然后输入“\.html$”。如果存在被标记的文件，dired命令会应用至所有标记的文件；如果没有被标记的文件，dired命令会被应用至光标所在文件。
+ 
+- *Dired导航*
+
+ 下面是一些常用dired命令：
+
+ | Key | Command            | Purpose                |
+ |-----+--------------------+------------------------|
+ | g   | revert-buffer      | 刷新目录列表           |
+ | ^   | dired-up-directory | 至上层父目录           |
+ | >   | dired-next-dirline | 移动光标至下一个子目录 |
+ | <   | dired-prev-dirline | 移动光标至上一个子目录 |
+
+ dired经常会和shell-command（M-!）或shell一起使用。在dired-mode中调用describe-mode可以查看全部命令列表。
+
+** 书签
+
+Emacs的书签功能与网络浏览器的类似，可以让你方便的打开经常需要的文件。
+
+- *使用书签*
+
+  + *将文件加入书签*
+    
+    打开想要加入书签的文件，然后调用bookmark-set（C-x r m）。Emacs会提示你输入名称
+
+  + *打开书签列表*
+
+    调用bookmark-bmenu-list（C-x r l）打开书签列表。
+
+  + *书签跳转：打开书签项*
+
+    调用bookmark-jump（C-x r b）然后输入名称。可以使用“*”作为通配符。
+
+  + *保存你的书签*
+
+    调用bookmark-save进行保存。
+    默认情况下，在emacs退出的时候书签会自动保存。在2014年以前的版本中，如果没有做保存书签操作的话，新加入的书签只在当前会话中可用，重启之后就不可见了。
+    可以通过设置bookmark-save-flag来控制书签的自动保存行为。
+
+    #+BEGIN_SRC emacs-lisp
+      (setq bookmark-save-flag 1) ; everytime bookmark is changed, automatically save it
+      (setq bookmark-save-flag t) ; save bookmark when emacs quits
+      (setq bookmark-save-flag nil) ; never auto save.
+    #+END_SRC
+
+  + *移除/重命名书签项*
+
+    在处于书签列表的时候：
+    - “D”用于标记当前的项以备删除；
+    - “x”用于删除所有使用“D”标记过的项；
+    - “r”用于对当前项的标题进行重命名；
+    - “s”用于保存所做更改
+    
+- *如何记住书签命令及快捷键？*
+
+ 书签的相关命令位于菜单：Edit -> Bookmarks。如果忘记了命令或者快捷方式，可以在此查看。
+ 并且，所有关于书签的命令都以“bookmark-”开头。你真正需要记住的命令只有一条：bookmark-bmenu-list。一旦打开了书签列表，可以调用describe-mode（C-h m）查看所有命令和快捷键。
+
+- *让emacs启动时显示书签*
+
+ 如果需要emacs在启动的时候显示书签，可以将下列代码加入初始化文件：
+
+ #+BEGIN_SRC emacs-lisp
+   (setq inhibit-splash-screen t)
+   (require 'bookmark)
+   (bookmark-bmenu-list)
+   (switch-to-buffer "*Bookmark List*")
+ #+END_SRC
+
+- *书签的源文件*
+
+ 在emacs 24.x中，书签文件位于~/.emacs.d/bookmarks；在emacs 23.x中，位于~/.emacs.bmk。
+ 书签的源文件位置由变量bookmark-default-file控制。调用describe-variable（C-h v）查看它的值。
+ 可以通过如下方式设置默认书签源文件的位置：
+
+ #+BEGIN_SRC emacs-lisp
+   (setq bookmark-default-file  (concat user-emacs-directory "bookmarks"))
+ #+END_SRC
+
+ 加载书签源文件的语法为：
+
+ #+BEGIN_SRC emacs-lisp
+   (bookmark-load bookmark-default-file t)
+ #+END_SRC
+
+** 打开最近访问的文件
+
+调用recentf-mode，然后调用recentf-open-files列出最近打开的文件。
+按下对应的数字打开文件，或者，将光标移动至对应的行再按回车键。
+
+- *为后续会话激活Recentf*
+
+ 将下列代码加入初始化文件：
+ #+BEGIN_SRC emacs-lisp
+   (recentf-mode 1) ; keep a list of recently opened files
+ #+END_SRC
+
+- *分配快捷键*
+ 
+ 为recentf-open-files分配一个快捷键是非常方便的事情。例如：
+
+ #+BEGIN_SRC emacs-lisp
+   ;; set F7 to list recently opened file
+   (global-set-key (kbd "<f7>") 'recentf-open-files)
+ #+END_SRC
+
+** 批量重命名文件
+
+首先调用dired，然后调用dired-toggle-read-only（C-x C-q）。
+接下来直接编辑文件名称。
+完成操作后，调用wdired-finish-edit（C-c C-c）提交更改，或者调用wdired-abort-changes（C-c C-k）取消更改。
+在wdired状态的时候，可以使用查找/替换功能。例如，调用query-replace或者query-replace-regexp。
+
+** 保存/恢复已打开文件以及窗口配置：desktop-mode
+
+Emacs有一个模式叫desktop-save-mode。在处于激活状态的时候，它会保存并恢复所有在上一个会话中打开的文件，以及窗口配置（尺寸、位置……）。
+将下列代码加入初始化文件即可激活此模式：
+#+BEGIN_SRC emacs-lisp
+  ;; save/restore opened files and windows config
+  (desktop-save-mode 1) ; 0 for off
+#+END_SRC
+
+- *启动emacs，但不打开之前会话的文件*
+
+ 通过emacs --no-desktop启动emacs。如果你的desktop文件损坏了，这条命令会很有用。（或者你可以直接删除desktop文件）
+
+- *Desktop文件路径位置*
+
+ 默认情况下，emacs用于存储desktop的临时文件位于~/.eamcs.d/.emacs.desktop。
+ 变量desktop-dirname和desktop-base-file-name控制着desktop文件的路径。
+ 调用describe-variable，输入“desktop-”然后按tab键来查看所有desktop模式的变量。
+ 调用customize-group，输入“desktop”来进行偏好设置。
+
+- *desktop-save-mode在emacs 24.4中的变更*
+
+ 加入新变量desktop-save。默认值为t，在退出的时候desktop会自动保存。
+ 加入新变量desktop-auto-save-timeout。默认值为30秒，即，每隔30秒自动保存一次。之前只有在退出emacs的时候才保存。
+ 加入新变量desktop-restore-frames。默认值为t，会保存并恢复frame和window的配置。
+ 更多关于恢复windows的选项，可以查看变量：desktop-restore-in-current-display、desktop-restore-reuses-frames和desktop-restore-forces-onsecreen。
+
+** 新缓冲区/文件
+
+在emacs中可以通过调用switch-to-buffer（C-x b）并输入名称来打开一个缓冲区/文件。
+通过下列代码可以打开一个空的缓冲区，并且不需要输入名称。
+#+BEGIN_SRC emacs-lisp
+  (defun xah-new-empty-buffer ()
+    "Create a new empty buffer.
+  New buffer will be named “untitled” or “untitled<2>”, “untitled<3>”, etc.
+
+  URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
+  Version 2016-12-27"
+    (interactive)
+    (let ((-buf (generate-new-buffer "untitled")))
+      (switch-to-buffer -buf)
+      (funcall initial-major-mode)
+      (setq buffer-offer-save t)))
+#+END_SRC
+
+- *设置默认主模式*
+
+ 将如下代码加入初始化文件来设置默认主模式：
+ 
+ #+BEGIN_SRC emacs-lisp
+   (setq initial-major-mode (quote text-mode))
+ #+END_SRC
+
+ 如果你想使用与scratch缓冲区相同的模式，用lisp-interaction-mode。或者使用普通的emacs-lisp-mode。
+
+- *列示主模式*
+
+ 调用describe-variable（C-h v）并输入auto-mode-alist。
+
+** 只在用户/系统缓冲区间进行切换
+
+/因为我已经使用tabbar插件进行buffer切换，所以这部分内容不太重要。但其中有对buffer的分类判定，所以还是加入笔记中了。/
+
+Emacs提供了用以在缓冲区间前后切换的命令：next-buffer（C-x C-<right>）切换至下一个缓冲区；previous-buffer（C-x C-<left>）切换至上一个缓冲区。
+其中的一个问题是你不能按住按键以重复此命令。另一个问题是切换过程会经过很多用户不会感兴趣的系统缓冲区。
+这里是一些Emacs自身产生的缓冲区示例：*scratch*、*Messages*、*shell*、*Shell Command Output*、*Occur*、*Completions*、*Apropos*、*info*。
+
+- *只在用户缓冲区间切换*
+
+ 这里是用于只在用户缓冲区间切换的命令。
+
+ #+BEGIN_SRC emacs-lisp
+   (defun xah-next-user-buffer ()
+     "Switch to the next user buffer.
+   “user buffer” is determined by `xah-user-buffer-q'.
+   URL `http://ergoemacs.org/emacs/elisp_next_prev_user_buffer.html'
+   Version 2016-06-19"
+     (interactive)
+     (next-buffer)
+     (let ((i 0))
+       (while (< i 20)
+         (if (not (xah-user-buffer-q))
+             (progn (next-buffer)
+                    (setq i (1+ i)))
+           (progn (setq i 100))))))
+
+   (defun xah-previous-user-buffer ()
+     "Switch to the previous user buffer.
+   “user buffer” is determined by `xah-user-buffer-q'.
+   URL `http://ergoemacs.org/emacs/elisp_next_prev_user_buffer.html'
+   Version 2016-06-19"
+     (interactive)
+     (previous-buffer)
+     (let ((i 0))
+       (while (< i 20)
+         (if (not (xah-user-buffer-q))
+             (progn (previous-buffer)
+                    (setq i (1+ i)))
+           (progn (setq i 100))))))
+ #+END_SRC
+
+ 你同时还需要下边的代码确定什么才是用户缓冲区。例如，你希望在其中加入dired缓冲区吗？shell呢？
+ 如果你需要定制的话，就覆写下面的方法。
+
+ #+BEGIN_SRC emacs-lisp
+   (defun xah-user-buffer-q ()
+     "Return t if current buffer is a user buffer, else nil.
+   Typically, if buffer name starts with *, it's not considered a user buffer.
+   This function is used by buffer switching command and close buffer command, so that next buffer shown is a user buffer.
+   You can override this function to get your idea of “user buffer”.
+   version 2016-06-18"
+     (interactive)
+     (if (string-equal "*" (substring (buffer-name) 0 1))
+         nil
+       (if (string-equal major-mode "dired-mode")
+           nil
+         t
+         )))
+ #+END_SRC
+ 
+- *只在系统缓冲区间切换*
+
+ 这里是用于只在系统缓冲区间切换的命令。
+
+ #+BEGIN_SRC emacs-lisp
+   (defun xah-next-emacs-buffer ()
+     "Switch to the next emacs buffer.
+   “emacs buffer” here is buffer whose name starts with *.
+   URL `http://ergoemacs.org/emacs/elisp_next_prev_user_buffer.html'
+   Version 2016-06-19"
+     (interactive)
+     (next-buffer)
+     (let ((i 0))
+       (while (and (not (string-equal "*" (substring (buffer-name) 0 1))) (< i 20))
+         (setq i (1+ i)) (next-buffer))))
+
+   (defun xah-previous-emacs-buffer ()
+     "Switch to the previous emacs buffer.
+   “emacs buffer” here is buffer whose name starts with *.
+   URL `http://ergoemacs.org/emacs/elisp_next_prev_user_buffer.html'
+   Version 2016-06-19"
+     (interactive)
+     (previous-buffer)
+     (let ((i 0))
+       (while (and (not (string-equal "*" (substring (buffer-name) 0 1))) (< i 20))
+         (setq i (1+ i)) (previous-buffer))))
+ #+END_SRC
+
+ 下面是为其定义快捷键的示例：
+
+ #+BEGIN_SRC emacs-lisp
+   (global-set-key (kbd "<f11>") 'xah-previous-user-buffer)
+   (global-set-key (kbd "<f12>") 'xah-next-user-buffer)
+
+   (global-set-key (kbd "<S-f11>") 'xah-previous-emacs-buffer)
+   (global-set-key (kbd "<S-f12>") 'xah-next-emacs-buffer)
+ #+END_SRC
+
+** 打开最后关闭的文件
+
+将下方代码加入emacs的初始化文件。
+
+#+BEGIN_SRC emacs-lisp
+  (defvar xah-recently-closed-buffers nil "alist of recently closed buffers. Each element is (buffer name, file path). The max number to track is controlled by the variable `xah-recently-closed-buffers-max'.")
+
+  (defvar xah-recently-closed-buffers-max 40 "The maximum length for `xah-recently-closed-buffers'.")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun xah-close-current-buffer ()
+    "Close the current buffer.
+
+  Similar to `kill-buffer', with the following addition:
+
+  • Prompt user to save if the buffer has been modified even if the buffer is not associated with a file.
+  • If the buffer is editing a source file in an org-mode file, prompt the user to save before closing.
+  • If the buffer is a file, add the path to the list `xah-recently-closed-buffers'.
+  • If it is the minibuffer, exit the minibuffer
+
+  URL `http://ergoemacs.org/emacs/elisp_close_buffer_open_last_closed.html'
+  Version 2016-06-19"
+    (interactive)
+    (let (-emacs-buff-p
+          (-org-p (string-match "^*Org Src" (buffer-name))))
+
+      (setq -emacs-buff-p (if (string-match "^*" (buffer-name)) t nil))
+
+      (if (string= major-mode "minibuffer-inactive-mode")
+          (minibuffer-keyboard-quit) ; if the buffer is minibuffer
+        (progn
+          ;; offer to save buffers that are non-empty and modified, even for non-file visiting buffer. (because kill-buffer does not offer to save buffers that are not associated with files)
+          (when (and (buffer-modified-p)
+                     (not -emacs-buff-p)
+                     (not (string-equal major-mode "dired-mode"))
+                     (if (equal (buffer-file-name) nil)
+                         (if (string-equal "" (save-restriction (widen) (buffer-string))) nil t)
+                       t))
+            (if (y-or-n-p (format "Buffer %s modified; Do you want to save? " (buffer-name)))
+                (save-buffer)
+              (set-buffer-modified-p nil)))
+          (when (and (buffer-modified-p)
+                     -org-p)
+            (if (y-or-n-p (format "Buffer %s modified; Do you want to save? " (buffer-name)))
+                (org-edit-src-save)
+              (set-buffer-modified-p nil)))
+
+          ;; save to a list of closed buffer
+          (when (buffer-file-name)
+            (setq xah-recently-closed-buffers
+                  (cons (cons (buffer-name) (buffer-file-name)) xah-recently-closed-buffers))
+            (when (> (length xah-recently-closed-buffers) xah-recently-closed-buffers-max)
+              (setq xah-recently-closed-buffers (butlast xah-recently-closed-buffers 1))))
+
+          ;; close
+          (kill-buffer (current-buffer))))))
+#+END_SRC
+
+下边是打开最近关闭文件的命令。
+
+#+BEGIN_SRC emacs-lisp
+  (defun xah-open-last-closed ()
+    "Open the last closed file.
+  URL `http://ergoemacs.org/emacs/elisp_close_buffer_open_last_closed.html'
+  Version 2016-06-19"
+    (interactive)
+    (if (> (length xah-recently-closed-buffers) 0)
+        (find-file (cdr (pop xah-recently-closed-buffers)))
+      (progn (message "No recently close buffer in this session."))))
+
+  (defun xah-open-recently-closed ()
+    "Open recently closed file.
+  Prompt for a choice.
+  URL `http://ergoemacs.org/emacs/elisp_close_buffer_open_last_closed.html'
+  Version 2016-06-19"
+    (interactive)
+    (find-file (ido-completing-read "open:" (mapcar (lambda (f) (cdr f)) xah-recently-closed-buffers))))
+
+  (defun xah-list-recently-closed ()
+    "List recently closed file.
+  URL `http://ergoemacs.org/emacs/elisp_close_buffer_open_last_closed.html'
+  Version 2016-06-19"
+    (interactive)
+    (let ((-buf (generate-new-buffer "*recently closed*")))
+      (switch-to-buffer -buf)
+      (mapc (lambda (-f) (insert (cdr -f) "\n"))
+            xah-recently-closed-buffers)))
+#+END_SRC
+
+为这些命令设置快捷键：
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-x k") 'xah-close-current-buffer)
+  (global-set-key (kbd "C-S-t") 'xah-open-last-closed) ; control+shift+t
+#+END_SRC
+
+** 打开光标所在路径的文件
+
+TO BE DONE
+
+
+
+** 使用外部应用打开文件
+
+TO BE DONE
+
+
+
+
+** 文件编码常见问题
+
+- *如何使用指定编码系统打开文件？*
+
+ 正常打开文件，然后调用revert-buffer-with-coding-system，接着输入一个编码系统的名称。按tab键能列出可用选项。
+
+- *如何使用指定的编码系统保存文件？*
+
+ 调用set-buffer-file-coding-system，然后输入想使用的编码系统。按tab键可以查看可用值。
+ 设置编码系统之后，你就可以使用新指定的编码系统保存文件了。
+
+- *在缓冲区中如何查看解码当前文件所用的编码系统*
+
+ 查看变量：buffer-file-coding-system。
+
+- *如何查看当前打开/保存文件所用的编码系统？*
+
+ 调用describe-coding-system命令。
+
+- *如何永久选择一个编码系统用于打开/保存文件？*
+
+ 选择菜单：Options -> Mule (Multilingual Environment) -> Set Language Environment。选定之后一定要将更改保存至初始化文件：Options -> Save Options。
+ 或者直接在初始化文件中加入：
+
+ #+BEGIN_SRC emacs-lisp
+   ;; UTF-8 as default encoding
+   (set-language-environment "UTF-8")
+ #+END_SRC
+
+- *Emacs都支持什么编码系统？*
+
+ 调用list-coding-systems命令。
+
+- *有没有方法为一个文件生命特定的字符编码？*
+
+ 在文件的第一行，输入“-*- coding: utf-8 -*-”。使用这种方法，每次emacs打开这个文件都会推测此文件是使用utf-8进行编码的。该行可以使用文件所用语言的注释符号开头，例如“#”、“//”。Python语言也可以使用这种方法。
+
+* 查找与替换
+
+** 搜索/高亮显示
+
+默认情况下，搜索操作是大小写不敏感的，除非你搜索的字符串中包含大写字母。
+在进行搜索的时候，可以按“M-s c”来绑定大小写敏感。或者，可以在开始搜索前调用toggle-case-fold-search使大小写敏感。完成搜索操作之后记得要修改回去。
+
+- *将空格、连字符和下划线视为等同*
+
+ #+BEGIN_SRC emacs-lisp
+   ;; make isearch treat space dash underscore newline as same
+   (setq search-whitespace-regexp "[-_ \n]")
+ #+END_SRC
+
+- *搜索光标所在位置的词*
+
+ 在搜索操作时，按C-w来选择光标右侧的字符串。
+ 下面的命令也可以进行搜索操作，但会使用光标所在位置的词，节省输入。
+
+ | key   | Command                         | Purpose |
+ |-------+---------------------------------+---------|
+ | M-s . | isearch-forward-symbol-at-point | 搜索光标下的“symbol”，带边界检查。也就是说“xyz”是不会匹配“xyz2”的。@@html:</br>@@由缓冲区的主模式决定哪些字符属于此“symbol”。 |
+ | M-s w | isearch-forward-word            |搜索光标下的词，不区分_、-和空格，同样进行边界检查。也就说，“x y”不匹配“x y2”。 |
+ | M-s _ | isearch-forward-symbol          | 与普通isearch相同，但是进行边界检查。 |
+
+ *警告* ：这些搜索命令会进行边界检查，如果搜索的内容为“xy”，则不会匹配“xy2”。“-”和“_”会不会被视作symbol或word的一部分要由当前的语法决定，通常不同的模式会有所不同。
+
+- *搜索的Keys/Modes*
+
+ 搜索（isearch）又许多复杂的特性，可以调用相关文档学习：isearch-describe-mode、isearch-describe-bindings。
+
+- *列出搜索到的匹配行*
+
+ 有时候需要列出匹配搜索条件的行。
+
+ | Key   | Command | Purpose                   |
+ |-------+---------+---------------------------|
+ | M-s o | occur   | 与list-matching-lines相同 |
+
+ *注意* ：在使用C-s进行搜索之后（还没有退出搜索操作），可以调用M-s o来列出匹配行。
+
+- *持续高亮显示结果的命令*
+
+ 搜索（isearch）命令会高亮显示匹配的字符串，但是在退出搜索之后，高亮显示也会消失。
+ 下面的命令会在你关闭文件之前一直高亮显示匹配结果。
+
+ | Key     | Command                         |
+ |---------+---------------------------------|
+ | M-s h . | highlight-symbol-at-point       |
+ | M-s h f | hi-lock-find-patterns           |
+ | M-s h l | highlight-lines-matching-regexp |
+ | M-s h p | highlight-phrase                |
+ | M-s h r | highlight-regexp                |
+ | M-s h u | unhighlight-regexp              |
+
+ *注意* ：在使用C-s进行搜索之后（还没有退出搜索操作），可以调用M-s h r来对搜索结果进行持续高亮显示。
+
+** 在多个文件中搜索文本（grep）
+
+- *在文件夹中查找*
+ 
+ 调用grep命令列出当前目录中所有匹配搜索条件的文件。（Emacs的grep命令会调用Unix的grep命令。在微软的Windows下，需要安装cygwin。）
+ 当前目录一般指当前打开文件所处的文件夹。调用grep之后会出现如下提示：
+
+ #+BEGIN_SRC bash
+ grep  -nH -e 
+ #+END_SRC
+ 
+ 举个例子，如果你输入“grep -nH -e "Cheshire" *html”，将会列出所有以“html”为文件名结尾，并且其中包含“Cheshire”的文件。
+ 如果你希望进行大小写不敏感的搜索，在grep命令选项中添加“-i”。
+
+- *在嵌套文件夹中查找*
+
+ 在当前目录和所有子目录中查找文本，可以用以下方法：
+ 
+  + rgrep：在当前目录和子目录中查找所有文件。
+  + lgrep：只查找当前目录中的某些文件，首先对文件名称应用正则表达式。
+  + grep-find：使用Unix的grep和find的组合命令。示例：find . -type f -exec grep -nH -e MySearchStr。
+
+- *在dired中显示匹配文件*
+ 
+ 如何在dired中显示unix find的结果？
+ 调用find-dired命令。
+ 在Unix中，如果你想要列出当前目录及子目录下所有名称以“.html”结尾的文件，可以执行“find . -name "*.html" -print”。
+ 此搜索结果是以文本的方式输出的。如果你想在这些文件上运行字数统计命令“wc”，可以使用find命令的选项“-exec”，或者与xargs命令进行组合。例如：find . -name "*.html" -print | xargs -l -i wc {}。
+ 然而，有时候你需要对这些文件做几个复杂的事情，并且希望是交互式的。例如，对其中几个做字数统计，对几个运行其它命令，对另外几个重命名。在这种情况下，将这些文件显示在emacs的dired模式中是非常有用的，然后你就可以用dired的能力来处理这些文件了。
+
+- *在dired中查看匹配文件*
+
+ 在dired中，调用dired-do-search（A），会提示你输入要搜索的字符串，然后打开匹配的第一个文件，光标会位于匹配内容的位置。
+ 按M-,（tags-loop-continue）跳至下一个匹配位置。
+
+** 查找/替换
+
+- *查找/替换的命令*
+
+ 下面是常用的命令，在菜单Edit -> Replace中同样可以找到。
+
+ | Key          | Command Name                  | Target                       | Purpose                       |
+ |--------------+-------------------------------+------------------------------+-------------------------------|
+ | M-%          | query-replace                 | 选定区域，或者从光标处至末尾 | 交互式查找/替换               |
+ | C-M-%        | query-replace-regexp          | 选定区域，或者从光标处至末尾 | 使用正则进行交互式查找/替换   |
+ | 在dired中，Q | dired-do-query-replace-regexp | 在dired中标记了的文件        | 对多个文件进行交互式查找/替换 | 
+
+ 例如，调用query-replace，然后输入要搜索的字符串，然后输入要替换成的字符串。
+ 当搜索命令提示你确认的时候，使用以下常用键：
+ 
+  + y：替换。
+  + n：跳过。
+  + !：替换，并且不再询问，直接替换。
+  + C-g：取消。（调用undo来撤销已完成的替换）
+
+- *批量替换*
+
+ replace-string：一次性完成查找/替换，不会每次都询问。作用范围从光标位置至缓冲区末尾，或者是一个选定区域。
+ replace-regexp：除了使用正则外，与replace-string相同。
+
+- *如何插入tab和newline字符？*
+
+  + 插入tab，按“C-q C-i”
+  + 插入newline，按“C-q C-j”
+
+- *默认大小写敏感性：Smart*
+
+ 默认情况下，如果你所搜索的字符串中包含大写字母，那么此搜索就是大小写敏感的，否则为大小写不敏感。
+ 默认情况下，替换文本的大小写是根据所匹配文本的情况进行智能决定的。例如，假设你所搜索的字符串是“here”，替换字符串是“dragon”。Emacs会认为“here、Here、HERE”中的任意值都与之匹配。当找到“here”的时候，替换为“dragon”；找到“Here”的时候，替换为“Dragon”；找到“HERE”的时候，替换为“DRAGON”。
+ 如果你想要替换字符串的大小写情况严格遵守你的输入内容，需要设置变量case-replace为nil。可以通过调用set-variable进行设置。
+
+- *关闭Smart大小写敏感性*
+
+ 调用toggle-case-fold-search命令，或者选择菜单Options -> Case-Insensitive Search。
+
+- *在正则匹配中对所匹配文本强制大小写转换*
+
+ 如果你正在进行正则搜索，而且希望强制替换字符串为大写/小写，则在替换提示符下，输入“\,(upcase \1)”或者“\,(downcase \1)”。
+ 举例来说，有如下文本：
+
+ #+BEGIN_SRC html
+   <p>once upon a time …</p>
+   <p>There is a dragon who lived in …</p>
+   <p>princess Tana is still waiting …</p>
+ #+END_SRC
+
+ 假如你希望所有段落的首字母为大写。
+ 首先使用正则获取<p>后的第一个字母：<p>\([a-z]\)。
+ 为了使获取的字母转为大写，需要为替换字符串指定表达式：<p>\,(upcase \1)。其中“\,”告诉emacs后面的内容为lisp表达式。而“(upcase \1)”是lisp表达式。其中“upcase”是一个lisp方法（function），“\1”表示正则表达式第一个获取的字符串。
+
+** 在多个文件中查找/替换
+
+假设你希望在一个目录中的上百个文件里进行查找/替换，并且需要逐个确认。
+
+- *方法*
+ 
+  1. 调用dired列出目录中的文件，如果需要所有子目录的话，调用find-dired。
+  2. 标记所需操作文件。可以输入“% m”来进行正则标记。
+  3. 按“Q”调用dired-do-query-replace-regexp。
+  4. 输入正则搜索规则和替换字符串。
+  5. 对每一个匹配项，按“y”替换，按“n”跳过。按“C-g”退出整个操作。
+  6. 按“!”则不再询问，直接对当前文件所有匹配项进行替换。按“N”则跳过当前文件的所有后续匹配项。（“N”操作只在emacs 23中有效）
+  7. 如果需要对所有文件不询问直接替换，按“Y”。（只在emacs 23中有效）
+  8. 调用ibuffer列出所有已打开的文件。
+  9. 按“* u”标记所有未保存的文件，按“S”保存所有已标记的文件，按“D”将其全部关闭。
+
+*** 初学者指导step-by-step
+
+- 选择目标文件
+
+  + *选择一个目录下的文件*
+
+    首先需要选定要进行替换操作的文件。使用菜单：File -> Open Directory。Emacs会询问你文件夹路径。输入路径之后按回车键。
+    现在你需要在显示的文件列表中标记需要做正则替换的文件。可以将光标移动至文件然后按“m”进行标记，按“u”取消标记。（如果需要列出子目录中的文件，将光标移至子目录然后按“i”。该子目录的内容会在底部列出。）按“% m”可以通过输入正则表达式标记文件。例如，如果想标注所有的html文件，按“% m”后输入“\.html$”。（可以在Mark菜单中查看标记命令列表（当处于dired模式时会显示此菜单）。）
+      
+  + *选择一个目录及子目录下的文件*
+      
+    调用find-dired。然后输入目录名，例如，/Users/jason/myfiles。
+    *注意* ：如果是在unix的终端中（terminal）使用emacs，如果“M-x”调用命令不起作用的话，实现相同功能的快捷键为“ESC-x”。
+    Emacs接着会提示“Run find (with args):”。如果你需要对所有html文件进行查找/替换的话，输入“-name "*html"”。如果你不关心文件类型，只是单纯的要处理目录下的所有文件，输入“-type f”。
+
+- *交互式查找/替换*
+
+  简单的举例来说，你希望用“super”替换“quick”。现在调用dired-do-query-replace-regexp。你会被提示输入要搜索的正则字符串和替换字符串。输入“quick”后按回车键，然后输入“super”。
+  现在emacs开始使用你输入的正则检查文件，然后在发现匹配项的时候会停止并显示出来。此时，emacs会给你提示，而你可以选择是进行替换还是跳过此项。按“y”进行替换，按“n”跳过。如果你希望emacs对当前文件的所有匹配进行替换，输入“!”。
+  如果你希望取消整个操作并且不保存任何更改的话，按“C-g”然后退出emacs。
+
+- *保存更改了的文件*
+    
+  现在，做完上面的过程之后，还需要一步操作，就是保存更改过的文件。
+  如果你使用的是emacs 22或之后的版本，可以调用ibuffer来显示缓冲区列表，然后输入“* u”对所有未保存的文件进行标记，然后按“S”将它们保存。
+  如果你使用的是emacs 21，调用list-buffers，然后将光标移动至想要保存的文件上按“s”。这是为之后要进行的保存操作进行标记。按“u”取消标记。完成这些之后按“x”对所有标注了的文件执行保存操作。
+  完成上述操作的另一个方法是：调用save-some-buffers（C-x s）。之后emacs会显示每个未保存的文件并询问你是否要对其进行保存。
+  *注意* ：emacs的正则与Perl或Python的不一样，但是类似。
+
+** Emacs正则
+
+使用正则最常见的命令是query-replace-regexp，其它还有dired-do-query-replace-regexp和list-matching-lines。
+还有许多其它的命令，可以通过调用apropos-command并输入“regex”进行查看。
+
+- *正则语法*
+
+ 这里是常用的一些模式。
+ | Pattern             | Matches                                               |
+ |---------------------+-------------------------------------------------------|
+ | .                   | 除了newline（“\n”）之外的任意单个字符                 |
+ | \.                  | 一段时间                                              |
+ | [0-9]+              | 1个或多个数字                                         |
+ | [^0-9]+             | 1个或多个非数字字符                                   |
+ | [A-Za-z]+           | 1个或多个字符                                         |
+ | [-A-Za-z0-9]+       | 1个或多个｛字符、数字、连字符｝                       |
+ | [_A-Za-z0-9]+       | 1个或多个｛字符、数字、下划线｝                       |
+ | [-_A-Za-z0-9]+      | 1个或多个｛字符、数字、下划线、连字符｝               |
+ | [ [ :ascii: ] ]+    | 1个或多个ASCII码字符。（从0至127，全包含）            |
+ | [ [ :nonascii: ] ]+ | 1个或多个非ASCII码字符，例如Unicode字符               |
+ | [\n\t ]+            | 1个或多个｛newline、tab、空格｝                       |
+ |---------------------+-------------------------------------------------------|
+ | "\([^"]+\)"         | 捕获双引号间的文本                                    |
+ |---------------------+-------------------------------------------------------|
+ | +                   | 匹配前面的模式1次或多次                               |
+ | *                   | 匹配前面的模式0次或多次                               |
+ | +?                  | 匹配前面的模式1次或多次，但使用最小匹配（non-greedy） |
+ | ?                   | 匹配前面的模式0次或1次                                |
+ |---------------------+-------------------------------------------------------|
+ | ^...                | 起始｛行、字符串、缓冲区｝                            |
+ | ...$                | 结束｛行、字符串、缓冲区｝                            |
+ | \`...               | 起始｛字符串、缓冲区｝                                |
+ | ...\'               | 结束｛字符串、缓冲区｝                                |
+ | \b                  | 词边界标志                                            | 
+
+ Unicode字符可以直接字面使用，例如，“→”会查找右箭头符号。也可以使用编码语法表示任意字符，例如，“\u2192”。
+
+- *newline和tab*
+
+  使用交互操作命令的时候，emacs不理解“\t”或“\n”。输入newline用“C-q C-j”或者“C-q RET”，输入tab用“C-q C-i”或者“C-q tab”。
+
+- *大小写敏感*
+
+  在使用[a-z]的时候，默认是大小写不敏感的。大小写敏感性是由变量case-fold-search控制的。可以调用toggle-case-fold-search对其绑定。
+  要记得在使用完之后对其解除绑定，因为搜索（isearch）和其它查找/替换命令都会用到case-fold-search。
+  不要使用[A-z]这种方式，因为这也会与一些标点符号相匹配，使用[A-Za-z]。
+
+- *JavaScript VS Emacs正则*
+
+  对于多数语言来说，正则都是类似的，例如JavaScript、Python、Ruby、Perl等等。Emacs的正则与之有些不同。
+  以下是一些主要区别。
+
+  |           | JavaScript | Emacs Lisp      |
+  |-----------+------------+-----------------|
+  | Capture   | (...)      | \(...\)         |
+  | digit     | \d         | [ [ :digit: ] ] |
+  | word      | \w         | [ [ :word: ] ]  |
+  | whitspace | \s         | [ [ :space: ] ] |
+
+- *交互的正则模式*
+
+  Emacs具有交互的正则模式。在你输入的时候即显示匹配项。调用regexp-builder可以进入此模式。或者，调用query-replace-regexp来测试自己写的模式。
+
+* 编辑文本
+
+** 复制/粘贴，kill-ring
+
+- *Undo、Cut、Copy、Paste*
+
+  | Name  | Emacs keys      | Command        |
+  |-------+-----------------+----------------|
+  | undo  | C-/或C-_或C-x u | undo           |
+  | cut   | C-w             | kill-region    |
+  | copy  | M-w             | kill-ring-save |
+  | paste | C-y             | yank           |
+
+  在emacs中：
+  + Cut叫做“kill”，就像｛kill word、kill text、kill region｝。
+  + Paste叫做“yank”。
+  + 复制文本的历史记录叫做“kill ring”，存储在变量kill-ring中。
+
+- *从kill-ring历史记录中粘贴*
+
+  Emacs的剪贴板（kill-ring）维护着复制/剪切内容的历史记录。
+
+  + *查看kill-ring内容*
+
+    通过菜单：Edit -> Select and Paste；或者调用describe-variable（C-h v）输入kill-ring。
+
+  + *从kill-ring历史记录中粘贴*
+
+    主要有两种方式可以从之前复制的内容中进行粘贴。
+
+    - 调用universal-argument（C-u） ，输入数字n，然后调用yank（C-y）。这会粘贴kill-ring中的第n项。（如果指定n为1的话，结果与不加参数调用yank相同。）
+    - 调用yank（C-y），然后调用yank-pop（M-y）一次或多次来粘贴之前所复制的内容。
+
+- *累加文本内容*
+
+  有时候需要复制多个不同区域的内容到一起，可以使用append-to-buffer命令。
+
+  1. 创建一个新缓冲区。调用switch-buffer（C-x b），然后随便输入一个名称，例如“hh”。
+  2. 选择一个区域。（可以调用set-mark-command（C-SPC）然后移动光标。）
+  3. 调用append-to-buffer，然后输入缓冲区的名字。（例如之前创建的“hh”。）
+  4. 对不同的选定区域重复执行上面的操作。
+
+  Emacs还有一些其它有用的命令。
+
+  + append-to-buffer
+  + prepend-to-buffer
+  + copy-to-buffer：会覆盖已有内容。
+  + insert-buffer：将指定缓冲区的内容插入到当前缓冲区光标所在位置。
+  + append-to-file：将选定区域内容添加到指定文件的末尾。
+
+  
+- *多个剪贴板（Emacs Register）*<<CopyToRegister>>
+
+  Emacs的register允许你存储任意文本，就像有多个剪贴板一样（multiple-clipboards）。
+  假设你有两段文本：A和B。你需要将A粘贴至几个地方，将B粘贴至另外几个地方。
+  用法示例：
+
+  + 选择一段文本，然后调用copy-to-register（C-x r s），然后输入“3”。这会把文本存储在名称为“3”的register中。
+  + 需要粘贴时，调用insert-register（C-x r i），然后输入对应register的名称。
+
+  Register的名称可以是0至9的单个数字，或者是a至z的单个字母。
+
+- *Linux/Emacs/X11中复制/粘贴的问题*
+
+  TO BE DONE
+
+** 跳转至前一位置
+
+
+
+** 复制到Register
+
+[[CopyToRegister][多个剪贴板]]
+
+** camelCase和snake_case
+
+- *subword-mode、superword-mode、camelCase、snake_case*
+
+  Emacs的subword-mode会改变光标的移动/编辑命令，使光标会停在camelCase（驼峰式命名法）词的子词中间。
+  superword-mode（emacs 24.4）与之类似。它会将“x_y”视为一个词，对snake_case的词很有用。
+  subword-mode和superword-mode是互斥的，开启其中一个会关闭另外一个。
+  查看subword-word是否处于激活状态：调用describe-variable（C-h v）然后输入subword-mode。查看superword-mode的方法与之相同。
+  要想激活subword-mode，直接调用subword-mode；再次调用则将其关闭。
+  可以在emacs的初始化文件中加入：
+
+  #+BEGIN_SRC emacs-lisp
+    ;; move cursor by camelCase
+    (global-subword-mode 1) ; 1 for on, 0 for off
+  #+END_SRC
+
+** 折行、填充段落
+
+调用fill-paragraph（M-q）将段落中过长的行打断为多行显示。
+调用fill-region将选中区域中过长的行打断为多行显示。
+调用set-fill-column（C-x f）设置“fill”命令所使用的每行最大字符数。
+可以调用ruler-mode来显示当前内容的所占宽度。
+*注意* ：fill命令通过在不同的位置插入newline字符来打断行。
+
+- *auto-fill-mode*
+
+  如果你希望在输入的同时就进行折行操作，调用auto-fill-mode。
+
+- *unfill-paragraph、unfill-region*
+
+  Emacs没有提供类似unfill-paragraph的功能来完成与fill相反的工作。
+  下面是解决方法：
+
+  #+BEGIN_SRC emacs-lisp
+    (defun xah-unfill-paragraph ()
+      "Replace newline chars in current paragraph by single spaces.
+    This command does the inverse of `fill-paragraph'.
+
+    URL `http://ergoemacs.org/emacs/emacs_unfill-paragraph.html'
+    Version 2016-07-13"
+      (interactive)
+      (let ((fill-column most-positive-fixnum))
+        (fill-paragraph)))
+  #+END_SRC
+
+  #+BEGIN_SRC emacs-lisp
+    (defun xah-unfill-region (start end)
+      "Replace newline chars in region by single spaces.
+    This command does the inverse of `fill-region'.
+
+    URL `http://ergoemacs.org/emacs/emacs_unfill-paragraph.html'
+    Version 2016-07-13"
+      (interactive "r")
+      (let ((fill-column most-positive-fixnum))
+        (fill-region start end)))
+  #+END_SRC
+       
+- *自动绑定Fill/Unfill/Region*
+ 
+  这是一个更好的解决方案，它可以完成fill和unfill操作。而且如果有选中区域的话，会自动在上面操作。
+
+  #+BEGIN_SRC emacs-lisp
+    (defun xah-fill-or-unfill ()
+      "Reformat current paragraph or region to `fill-column', like `fill-paragraph' or “unfill”.
+    When there is a text selection, act on the selection, else, act on a text block separated by blank lines.
+    URL `http://ergoemacs.org/emacs/modernization_fill-paragraph.html'
+    Version 2017-01-08"
+      (interactive)
+      ;; This command symbol has a property “'compact-p”, the possible values are t and nil. This property is used to easily determine whether to compact or uncompact, when this command is called again
+      (let ( (-compact-p
+              (if (eq last-command this-command)
+                  (get this-command 'compact-p)
+                (> (- (line-end-position) (line-beginning-position)) fill-column)))
+             (deactivate-mark nil)
+             (-blanks-regex "\n[ \t]*\n")
+             -p1 -p2
+             )
+        (if (use-region-p)
+            (progn (setq -p1 (region-beginning))
+                   (setq -p2 (region-end)))
+          (save-excursion
+            (if (re-search-backward -blanks-regex nil "NOERROR")
+                (progn (re-search-forward -blanks-regex)
+                       (setq -p1 (point)))
+              (setq -p1 (point)))
+            (if (re-search-forward -blanks-regex nil "NOERROR")
+                (progn (re-search-backward -blanks-regex)
+                       (setq -p2 (point)))
+              (setq -p2 (point)))))
+        (if -compact-p
+            (fill-region -p1 -p2)
+          (let ((fill-column most-positive-fixnum ))
+            (fill-region -p1 -p2)))
+        (put this-command 'compact-p (not -compact-p))))
+  #+END_SRC
+
+** 矩形区域编辑
+
+- *kill-rectangle: 删除选定列的内容*
+
+  | Key     | Command Name   | Purpose              |
+  |---------+----------------+----------------------|
+  | C-x r k | kill-rectangle | 删除选中列的文本内容 |
+
+   #+BEGIN_SRC text
+    试着删除中间那一列的内容
+    3c21 646f 6374
+    6874 6d6c 3e3c
+    2063 6861 7273
+    202f 3e0a 3c6d
+    6965 7770 6f72
+    2277 6964 7468
+  #+END_SRC
+ 
+  1. 将光标移动到"646f"开始的位置，即，第一个“6”那里;
+  2. 调用set-mark-command (C-SPC);
+  3. 移动光标至"6964"之后;
+  4. 调用kill-rectangle (C-x r k)。
+
+- *replace-rectangle: 替换选定列的内容*
+
+  | Key     | Command Name      | Purpose          |
+  |---------+-------------------+------------------|
+  | C-x r t | replace-rectangle | 替换选中列的文本 |
+
+  #+BEGIN_SRC text
+    试着将如下内容：
+
+    3c21 646f 6374
+    6874 6d6c 3e3c
+    2063 6861 7273
+    202f 3e0a 3c6d
+    6965 7770 6f72
+    2277 6964 7468
+
+    修改为：
+
+    3c21 cat 6374
+    6874 cat 3e3c
+    2063 cat 7273
+    202f cat 3c6d
+    6965 cat 6f72
+    2277 cat 7468
+  #+END_SRC
+  
+  1. 将光标移动至“646f”开始的位置，即，第一个“6”那里；
+  2. 调用set-mark-command（C-SPC）；
+  3. 将光标移动至“6964”之后；
+  4. 调用replace-rectangle（C-x r t）然后输入“cat”按回车键。
+
+- *yank-rectangle: 粘贴一列文本*
+
+  | Key     | Command Name   | Purpose                                    |
+  |---------+----------------+--------------------------------------------|
+  | C-x r y | yank-rectangle | 粘贴一列文本（在调用了kill-rectangle之后） |
+
+  #+BEGIN_SRC text
+    试着将第2列和第3列互换位置
+
+    3c21 646f 6374
+    6874 6d6c 3e3c
+    2063 6861 7273
+    202f 3e0a 3c6d
+    6965 7770 6f72
+    2277 6964 7468
+  #+END_SRC
+
+  1. 将光标移动到第2列的“646f”之前，然后set-mark-command（C-SPC），然后移动光标至“6964”之后；（或者直接用鼠标选定这个区域）
+  2. 调用kill-rectangle（C-x r k）；
+  3. 将光标移动到第3列的“6374”之后，然后调用yank-rectangle（C-x r y）。
+
+- *rectangle-number-lines: 将数字序号插入垂直列*
+
+  | Key     | Command Name           | Purpose                                |
+  |---------+------------------------+----------------------------------------|
+  | C-x r N | rectangle-number-lines | 向垂直列中插入数字（emacs 24新加入的） |
+
+  #+BEGIN_SRC text
+    试着将如下内容：
+
+    cat
+    dog
+    bird
+    dragon
+
+    修改为：
+
+    1 cat
+    2 dog
+    3 bird
+    4 dragon
+  #+END_SRC
+  
+  1. 将光标置于“cat”的“c”字符上，然后set-mark-command（C-SPC），然后移动光标至“dragon”的“d”字符上；
+  2. 调用rectangle-number-lines（C-x r N）。
+  如果需要以其它的数字开始序号，在调用rectangle-number-lines之前调用universal-argument（C-u）。
+
+- *插入A~Z*
+
+  #+BEGIN_SRC text
+    试着将如下内容：
+
+    1 cat
+    2 creatures
+      dragon
+      phoenix
+      elf
+      hydra
+      medusa
+    3 dog
+    4 bird
+
+    修改为：
+
+    1 cat
+    2 creatures
+      A. dragon
+      B. phoenix
+      C. elf
+      D. hydra
+      E. medusa
+    3 dog
+    4 bird
+  #+END_SRC
+
+  1. 将光标置于"dragon"的“d”字符上;
+  2. 调用方法set-mark-command（C-SPC）;
+  3. 移动光标至"medusa"的“m”字符上;
+  4. 调用方法universal-argument（C-u）；
+  5. 调用方法rectangle-number-lines（C-x r N），会提示你输入参数；
+  6. 输入65（字母A为65，a为97）；
+  7. 删除默认的“%2d ”，输入“%c. ”(“%c”为字符格式，并且"%c. "后面包含一个空格，这样看着更合适)。
+
+
+- *其它矩形区域命令*
+
+  | Key       | Command Name                | Purpose                                                           |
+  |-----------+-----------------------------+-------------------------------------------------------------------|
+  | C-x r d   | delete-rectangle            | 与kill-rectangle类似，但不会把内容保存至特殊剪切板                |
+  |           | string-insert-rectangle     | 与replace-rectangle类似，但只插入字符串内容，不会替换矩形内的文本 |
+  | C-x r c   | clear-rectangle             | 用空格替换                                                        |
+  |           | delete-whitespace-rectangle | 删除所有的whitespace。这个方法的别名是close-rectangle             |
+  |           | delimit-columns-rectangle   |                                                                   |
+  | C-x r o   | open-rectangle              | 向矩形区域内插入空格                                              |
+  | C-x r M-w | copy-rectangle-as-kill      | 与kill-rectangle类似，但不会删除文本                              |
+
+  rectangle-mark-mode（C-x SPC）会高亮显示选中的矩形区域，此功能是emacs 24.4新加入的。
+  先调用rectangle-mark-mode，然后移动光标来高亮一块矩形区域（只能通过键盘移动），然后按DEL键即可删除矩形区域内的文本内容。
+
+- *复制矩形区域文本至kill-ring*
+
+  在调用kill-rectangle的时候，文本内容不会存入emacs的kill-ring，也不会存入操作系统的剪切板。
+  下面是保存矩形区域文本至emacs的kill-ring的命令。
+  #+BEGIN_SRC emacs-lisp
+    (defun xah-copy-rectangle-to-kill-ring (*begin *end)
+      "Copy region as column (rectangle region) to `kill-ring'
+    See also: `kill-rectangle', `copy-to-register'.
+    URL `http://ergoemacs.org/emacs/emacs_copy_rectangle_text_to_clipboard.html'
+    version 2016-07-17"
+      ;; extract-rectangle suggested by YoungFrog, 2012-07-25
+      (interactive "r")
+      (require 'rect)
+      (kill-new (mapconcat 'identity (extract-rectangle *begin *end) "\n")))
+  #+END_SRC
+
+** 删除行尾多余空白
+
+如何删除whitespace？
+| Command Name               | Area of Action     | Action                         |
+|----------------------------+--------------------+--------------------------------|
+| delete-trailing-whitespace | 缓冲区或者选定内容 | 删除所有行尾多余空格           |
+| whitespace-cleanup         | 缓冲区或者选定内容 | 删除多种情况下的空格，比较复杂 | 
+
+- *delete-trailing-whitespace*  
+
+  删除行尾多余空格，如果delete-trailing-lines的值为“t”，则同时会删除结尾处的空行。
+
+  #+BEGIN_SRC text
+    delete-trailing-whitespace is an interactive compiled Lisp function in
+    ‘simple.el’.
+
+    (delete-trailing-whitespace &optional START END)
+
+    Delete trailing whitespace between START and END.
+    If called interactively, START and END are the start/end of the
+    region if the mark is active, or of the buffer’s accessible
+    portion if the mark is inactive.
+
+    This command deletes whitespace characters after the last
+    non-whitespace character in each line between START and END.  It
+    does not consider formfeed characters to be whitespace.
+
+    If this command acts on the entire buffer (i.e. if called
+    interactively with the mark inactive, or called from Lisp with
+    END nil), it also deletes all trailing lines at the end of the
+    buffer if the variable ‘delete-trailing-lines’ is non-nil.
+  #+END_SRC
+
+- *whitespace-cleanup*
+
+  此操作比较复杂。
+
+  #+BEGIN_SRC text
+    whitespace-cleanup is an interactive autoloaded Lisp function in
+    ‘whitespace.el’.
+
+    (whitespace-cleanup)
+
+    Cleanup some blank problems in all buffer or at region.
+
+    It usually applies to the whole buffer, but in transient mark
+    mode when the mark is active, it applies to the region.  It also
+    applies to the region when it is not in transient mark mode, the
+    mark is active and C-u was pressed just before
+    calling ‘whitespace-cleanup’ interactively.
+
+    See also ‘whitespace-cleanup-region’.
+
+    The problems cleaned up are:
+
+    1. empty lines at beginning of buffer.
+    2. empty lines at end of buffer.
+       If ‘whitespace-style’ includes the value ‘empty’, remove all
+       empty lines at beginning and/or end of buffer.
+
+    3. 8 or more SPACEs at beginning of line.
+       If ‘whitespace-style’ includes the value ‘indentation’:
+       replace 8 or more SPACEs at beginning of line by TABs, if
+       ‘indent-tabs-mode’ is non-nil; otherwise, replace TABs by
+       SPACEs.
+       If ‘whitespace-style’ includes the value ‘indentation::tab’,
+       replace 8 or more SPACEs at beginning of line by TABs.
+       If ‘whitespace-style’ includes the value ‘indentation::space’,
+       replace TABs by SPACEs.
+
+    4. SPACEs before TAB.
+       If ‘whitespace-style’ includes the value ‘space-before-tab’:
+       replace SPACEs by TABs, if ‘indent-tabs-mode’ is non-nil;
+       otherwise, replace TABs by SPACEs.
+       If ‘whitespace-style’ includes the value
+       ‘space-before-tab::tab’, replace SPACEs by TABs.
+       If ‘whitespace-style’ includes the value
+       ‘space-before-tab::space’, replace TABs by SPACEs.
+
+    5. SPACEs or TABs at end of line.
+       If ‘whitespace-style’ includes the value ‘trailing’, remove
+       all SPACEs or TABs at end of line.
+
+    6. 8 or more SPACEs after TAB.
+       If ‘whitespace-style’ includes the value ‘space-after-tab’:
+       replace SPACEs by TABs, if ‘indent-tabs-mode’ is non-nil;
+       otherwise, replace TABs by SPACEs.
+       If ‘whitespace-style’ includes the value
+       ‘space-after-tab::tab’, replace SPACEs by TABs.
+       If ‘whitespace-style’ includes the value
+       ‘space-after-tab::space’, replace TABs by SPACEs.
+
+    See ‘whitespace-style’, ‘indent-tabs-mode’ and ‘tab-width’ for
+    documentation.
+  #+END_SRC
+
+** 缩写模式（Abbreviation）
+
+Emacs对于缩写的支持可以将你输入的几个剪短的词扩展为完整的句子或者代码模板。
+例如：
++ bg -> background
++ fed -> find . -depth -empty -type d
++ f -> function f() {return 3;}
++ hrt -> ♥
+
+调用abbrev-mode来激活此模式，再次调用可以将其关闭。
+如果想在emacs启动的时候即激活此模式，将下列代码加入初始化文件：
+
+#+BEGIN_SRC emacs-lisp
+  ;; turn on abbrev mode globally
+  (setq-default abbrev-mode t)
+#+END_SRC
+
+- *定义缩写*
+
+  假设你想定义“bg”为“background”。
+
+  1. 输入“background”；
+  2. 调用add-global-abbrev（C-x a g），在提示处输入“bg”。
+
+  现在，当你输入“bg”然后输入空格或者回车的话，会扩展为“background”。
+  如果你想只在当前的主模式下使用这个缩写，使用add-mode-abbrev（C-x a l）。
+  如果被扩展的文本不止是一个词，例如，扩展“faq”为“frequently asked questions”。
+
+  1. 输入“frequently asked questions”；
+  2. 选中以上文本内容；
+  3. 调用universal-argument（C-u），输入“0”；
+  4. 调用add-global-abbrev（C-x a g），在提示处输入“faq”。
+
+- *取消缩写定义*
+ 
+  如果需要删除缩写定义，给add-global-abbrev或者add-mode-abbrev传入为负的参数即可。
+  例如，取消“bg”的缩写定义：
+
+  1. 调用universal-argument（C-u），输入“-1”；
+  2. 调用add-global-abbrev（C-x a g），在提示处输入“bg”。
+
+- *保存缩写定义*
+
+  在你退出emacs的时候，会被询问是否要保存缩写定义。
+  若要自动保存，将下列代码加入初始化文件：
+
+  #+BEGIN_SRC emacs-lisp
+    (setq save-abbrevs 'silently)
+  #+END_SRC
+
+- *缩写文件的位置*
+
+  缩写定义会被保存在变量abbrev-file-name所定义的文件里。
+  默认情况下，在“~/.emacs.d/abbrev_defs”。
+  可以通过如下代码进行更改：
+
+  #+BEGIN_SRC emacs-lisp
+    (setq abbrev-file-name "~/emacs_abbre.el")
+  #+END_SRC
+  
+- *查看缩写定义*
+
+  list-abbrevs -> 列出所定义的缩写。
+
+- *编辑缩写定义*
+
+  可以对缩写定义进行编辑。从实际操作的角度来说，这是最好的增加/删除缩写的方式。
+  调用edit-abbrevs来对缩写定义进行编辑。
+
+  #+BEGIN_SRC text
+    (global-abbrev-table)
+
+    "addr"  0   "address"
+    "afaik" 0   "As far as I know"
+    ...
+  #+END_SRC
+
+  中间列的数字为此缩写已经被调用过的次数。
+
+  + 若要删除一个缩写定义，删除其所对应的行就行了。
+  + 若要增加一个缩写定义，新增一行就好了。
+
+  完成编辑后，如果需要进行加载或者保存的话，调用以下任意方法：
+  
+  + edit-abbrevs-redefine（C-c C-c）：根据当前缓冲区的内容重新定义缩写。
+  + abbrev-edit-save-buffer（C-x C-s）：重新定义缩写并保存至文件。
+  + abbrev-edit-save-to-file（C-x C-w）：重新定义缩写并保存至文件，但是会询问新的保存位置。
+
+- *缩写示例*
+  
+  缩写可以用于：
+
+  + 长单词，例如，“comm”为“communication”。
+  + 程序编写中的function模板。
+  + 软件许可的头文件。
+  + 地址、url、电话号码、公司名称等等。
+
+  以下是一些缩写示例：
+  
+  #+BEGIN_SRC emacs-lisp
+    ;; math/unicode symbols
+    "zin"   0   "∈"
+    "znin"   0   "∉"
+    "zinf"   0   "∞"
+    "zluv"   0   "♥"
+    "zsmly"   0   "☺"
+
+    ;; email
+    "zme"   0   "someone@example.com"
+
+    ;; computing tech
+    "zwp"   0   "Wikipedia"
+    "zms"   0   "Microsoft"
+    "zg"   0   "Google"
+    "zit"   0   "IntelliType"
+    "zmsw"   0   "Microsoft Windows"
+    "zwin"   0   "Windows"
+    "zie"   0   "Internet Explorer"
+    "zahk"   0   "AutoHotkey"
+
+    ;; normal english words
+    "zalt"   0   "alternative"
+    "zchar"   0   "character"
+    "zdef"   0   "definition"
+    "zbg"   0   "background"
+    "zkb"   0   "keyboard"
+    "zex"   0   "example"
+    "zkbd"   0   "keybinding"
+    "zenv"   0   "environment"
+    "zvar"   0   "variable"
+    "zev"   0   "environment variable"
+    "zcp"   0   "computer"
+
+    ;; signature
+    "zxl"   0   "Xah Lee"
+
+    ;; url
+    "zuxl"   0   "http://xahlee.info/"
+
+    ;; emacs regex
+    "zd"   0   "\\([0-9]+?\\)"
+    "zstr"   0   "\\([^\"]+?\\)\""
+
+    ;; shell commands
+    "zf"   0   "find . -type f -size 0 -exec rm {} ';'"
+  #+END_SRC
+
+  把“z”置于缩写开头，这样就不用担心与其它不需要扩展的词相冲突了。
+  
+- *手动加载/保存缩写定义文件*
+
+  + read-abbrev-file：从write-abbrev-file生成的文件中读取缩写定义。
+  + write-abbrev-file：将所有用户级别的缩写定义写入至lisp文件。
+
+** 键盘宏指令
+
+- *如何录制宏指令*
+
+  1. 开始录制, 按“C-x (”；（kmacro-start-macro）
+  2. 进行键盘操作;
+  3. 结束录制, 按“C-x )”。（kmacro-end-macro）
+  如果出现了输入错误, 可以用命令keyboard-quit（C-g）取消, 然后重新开始。
+
+- *运行宏指令*
+
+  使用下面任一方法运行刚才录制的宏指令：
+
+  + call-last-kbd-macro
+  + kmacro-end-and-call-macro（C-x e）
+
+- *非常有用的键盘宏命令*
+
+  | Key   | Command Name                |
+  |-------+-----------------------------|
+  |       | start-kbd-macro             |
+  |       | end-kbd-macro               |
+  | C-x e | kmacro-end-and-call-macro   |
+  |       | call-last-kbd-macro         |
+  |       | apply-macro-to-region-lines |
+
+  注意kmacro-end-and-call-macro和call-last-kbd-macro的执行效果是一样的, 只不过是如果宏指令正在录制的过程中, 它会先将其结束。
+  *注意* ：如果想要查看键盘宏指令的列表, 运行apropos-command命令, 然后输入"macro"。
+
+- *保存宏指令*
+
+  通过以下步骤保存键盘宏供将来使用:
+
+  1. 调用name-last-kbd-macro命令，然后输入此键盘宏的名字。
+  2. 调用insert-kbd-macro命令。此命令会在光标处插入指定名称的键盘宏的lisp代码。
+  3. 复制并粘贴代码至emacs初始化文件。
+  4. 在将来的emacs会话中, 可以像其它emacs命令一样, 通过名称调用你所定义的键盘宏。
+
+  当然, 在命名并保存了键盘宏之后, 你也可以为其指定键盘快捷键, 就像其他命令一样。
+
+*** 应用示例
+
+TO BE DONE
+
+** 文本对齐
+
+Emacs有几个可以对齐文本的命令，其中最有用的是align-regexp。假设你有如下文本：
+
+#+BEGIN_SRC text
+  tom = 5
+  jenny = 8
+  mary = 7
+#+END_SRC
+
+你希望将它们按“=”进行对齐。只要选择文本，然后调用align-regexp并输入“=”即可。操作效果如下：
+
+#+BEGIN_SRC text
+  tom   = 5
+  jenny = 8
+  mary  = 7
+#+END_SRC
+
+** 对匹配行进行列表/删除/高亮，对多行进行排序/反向
+
+Emacs中的list-matching-lines（M-s o）命令会在新的缓冲区（occur）中列出当前文件中所有包括被搜索内容的行。
+如果你想对所搜索词进行边界匹配的话，使用“\b”。就像这样“\bcat\b”，这会匹配“cat”但是不会匹配“cats”。
+
+* Tab、Indentation、Whitespace
+
+
+
+
+
+
+
+
+
+
+
+
+* ORG-MODE
+
+** TODO 基本操作
+
+
+
+** Tags
+
+在章节标题上面按“C-c C-c”或者“C-c C-q”可以为章节设定tag。
+
+** Markup
+
+/italic/ +strikethrough+ _underline_ *Bold* =verbatim=
+
+** 链接
+
+C-c C-l: 创建一个链接。在mini buffer的link:提示符后输入链接地址（例如，http://www.orgmode.org ）然后在Description:中输入“Org-mode”。
+
+如果指定的是本文档内部的位置，可以使用标签“<<目标位置>>”来定义链接的跳转位置。
+
+定义至其它文档位置的链接：
+
+** 表格
+
+*** 创建
+
+- 输入表头，例如：“|编号|数量|单价|总额|”，然后按"tab"键就会创建一个表格。
+  如果需要在header下创建分隔线，在header后按回车至下一行并输入分隔线：“|-”，然后按“tab”键。
+  或者在header中按快捷键"C-c -"，会在下一行输入分隔线。
+
+  | 编号 | 数量 | 单价 |  总额 |
+  |------+------+------+-------|
+  |    1 |    3 | 3.45 | 10.35 |
+  |    2 |    5 | 4.34 |    10 |
+  |    3 |    6 | 5.43 | 32.58 |
+  |    4 |    3 | 4.86 | 14.58 |
+#+TBLFM: $4=$2*$3::@3$4=$1*$2
+
+- 按快捷键"C-c |"然后按提示输入行列数创建表格。默认是5x2即5列2行，且其中一行是header。
+- 还可以直接将buffer上已有数据格式化成表格：
+  + 如果是以逗号","分隔的CSV格式数据，先将内容选中，然后按"C-c |"将其转换成表格形式(需要自己添加分隔线)；
+  + 如果数据之间是用空格分隔的，选中内容之后，按快捷键"C-u 1 C-c |"。
+
+*** 编辑
+
+  | Key            | Desc.                                                                             |
+  |----------------+-----------------------------------------------------------------------------------|
+  | TAB            | 切换到下一个单元格，如已是最后一个单元格，则新建一行并跳到该行第一个单元格        |
+  | C-c C-c        | 强制表格重新排列                                                                  |
+  | S-M-right      | 在当前列左侧插入新列                                                              |
+  | S-M-left       | 删除当前列                                                                        |
+  | S-M-down       | 在当前行前插入一行                                                                |
+  | S-M-up         | 删除当前行                                                                        |
+  | C-m            | 移动到下一行，或新建一行                                                          |
+  | M-up/M-down    | 将当前行往上/下移动                                                               |
+  | M-left/M-right | 将当前列往左/右移动                                                               |
+  | C-c '          | 编辑单元格的公式(注意"'"为单引号)                                                 |
+  | C-c `          | 编辑当前单元格的内容(注意"`"为反向单引号)                                         |
+  | C-c SPC        | 删除单元格内容                                                                    |
+  | C-c C-x C-w    | 剪切某个区域的表格内容                                                            |
+  | C-c C-x C-y    | 拷贝复制的内容到表格                                                              |
+  | S-return       | 当单元格无内容时，移动光标到下方单元格(或新建一行);否则移动光标之后的内容到下一行 |
+  | C-c ^          | 表格排序                                                                          |
+  | <number>       | 指定本列的显示宽度。<8>表示显示8个英文字符的宽度                                  |
+  | <r>/<l>/<c>    | 指定本列的对齐方式(经测试，<c>和<l>都是向左对齐)                                  |
+
+*** 表格公式
+
+- 在表格区域使用快捷键"C-c '"，可以在一个独立的、临时的buffer中对表格公式进行编辑，完成后公式会显示在表格下方，以"#+TBLFM:"开头；
+- 在表格公式中，用"@"表示行，用"$"表示列。"@3$2"表示第三行第二列的位置；如果只给一个坐标，则另一个坐标会被设为"当前行"或者"当前列"；
+- 用"@#"表示当前行的行号，用"$#"表示当前列的列号；
+- 用".."来表示一个区域，"@2$1..@4$3"表示左上角为第二行第一列、右下角为第四行第三列的区域，共包含 9 个单元格；
+- 使用快捷键"C-c }"可以开启/关闭表格的横纵坐标显示；
+- 表格公式能以Emacs Lisp的形式来进行编写，不过要在这种形式的公式前加上单引号"'"才能正确求值。在Emacs Lisp形式的公式表达式中，传入的参数会被当作字符串，所有需要用格式化选项"N"来指明参数类型都是数值；
+- 在表格公式中按"C-c C-c"对公式进行计算并将结果填入表格。
+
+**** 示例
+
+1. 在一个单元格内输入“=$2*$3”，然后按"C-u C-c C-c"则对整列按此公式进行计算。 如果你不想让每一列都按照公式计算，只希望在某一特定项上进行计算，可以这样输入：":=$2*$3", 即在等号前再加一个冒号。
+2. 使用Emacs Lisp表达式计算第三列从第二行至第六行的和： #+TBLFM: @7$3='(+ @2$3..@6$3);N，要记得在末尾处添加";N"进行格式化。
+
+*** 常量与引用
+
+常量的定义可以通过"org-table-formula-constants"来进行，这样定义的常量是全局的；如果要定义局部的常量，可以在org文件中添加诸如这样的行："#+CONSTANTS: pi=3.14 eps=2.4e-6"。
+
+可以在当前表格引用其他表格的域，这需要其他表格被命名为某个名字，例如，为下面第一个表格添加命名"#+NAME: fruit_expense"。
+
+  #+NAME: fruit_expense
+  | 名称 | 单价 | 数量 | 花费 |
+  |------+------+------+------|
+  | 苹果 |  5.3 |    2 | 10.6 |
+  | 桔子 |  3.2 |    4 | 12.8 |
+  | 香蕉 |  4.3 |    3 | 12.9 |
+  |------+------+------+------|
+  | 合计 |      |      | 36.3 |
+  #+TBLFM: $4=$2*$3
+  #+TBLFM: @5$4=vsum(@2$4..@4$4)
+
+  引用之前的fruit_expense表格中的合计价格：在本表格下方添加"#+TBLFM: @2$2=remote(fruit_expense, @5$4)"。
+  | 支出项目 | 支出总额 |
+  |----------+----------|
+  | 食物     |     36.3 |
+  | 通勤     |          |
+  #+TBLFM: @2$2=remote(fruit_expense, @5$4)
+
+*** TODO 表格绘图
+
+
+
+*** 表格导入/导出
+
+Org mode 提供了"org-table-import"这个命令来将外部文件导入到Org mode文档中并用它来创建表格，与之对应的，命令"org-table-export"则能将Org mode文档中的表格导出成文件。文件格式可以是CSV的，也可以是以制表符(TAB)或空白字符作为分隔符的。
+
+** 导出至其它格式
+
+按C-c C-e，然后按提示输入想导出的格式。例如，输入“h o”为导出为html格式并在浏览器中打开。
+
+设置导出选项：
+- #+TITLE: Org Mode      //导出的标题
+- #+OPTIONS: toc:nil     //不显示目录等等
+
+** 添加源代码片段
+
+输入“<s”然后按tab键，并指定源码类型，例如：java、emacs-lisp等。然后按“C-c '”可以直接在新buffer中编辑源代码(可以语法高亮)。
+
+#+BEGIN_SRC java
+  public class Demo{
+      public static void main(String[] args){
+          System.out.println("hello world");
+      }
+  }
+#+END_SRC
+在代码区域中按“C-c C-c”可以直接执行。（但是我还没有配置这个功能）
+
+同样可以使用“<e”、“<q”等加入其它格式的片段。
+
+** 集成了LaTex支持
+
+- Characters： \alpha \rightarrow \beta
+- $O(n \log n)$
+- 对齐操作
+ \begin{align*}
+   3 * 2 + &= 6 + 1 \\
+           &= 7
+ \end{align*}
+
+** 关于待办事项(TODO)
+
+可以对任意章节的标题进行“待办事项”管理。
+- 按“C-c C-t”切换事项的状态（TODO、DONE），也可以使用S-left或者S-right；
+- 按“C-c C-s”为该项任务设置计划开始时间，即scheduled；
+- 按“C-c C-d”为该项任务设置deadline时间（在时间上按S-up或者S-down进行调整）；
+- 按“C-c a”显示日程表，即agenda；
+
+*** 完成进度
+
+- 在一个项目符号("-"或者"+")之后使用包括一个空格的中括号可以生成checkbox。例如，“- [ ] eggs”，按“C-c C-c”可以切换checkbox的选中状态；
+- 在上层项目或者所在章节标题后面加上“[/]或者[%]”可以显示当前项目的进度；
+
+#+BEGIN_EXAMPLE
+- Breakfast [/]
+  - [ ] eggs
+  - [ ] bacon
+  - [ ] pancakes
+#+END_EXAMPLE
+
+** HTML标记
+
+org支持嵌入html标记，例如可以在table的单元格中加入“@@html:<br/>@@”来实现换行。
+
+
+
+
+
+
+
+
+
+* Neotree
+   (kbd "TAB")     ('neo-open-dir)
+   (kbd "RET")     ('neo-open-dir)
+   (kbd "|")       ('neo-open-file-vertical-split)
+   (kbd "-")       ('neo-open-file-horizontal-split)
+   (kbd "d")       ('neo-open-dired)
+   (kbd "g")       ('neotree-refresh)
+   (kbd "q")       ('neotree-hide)
+   (kbd "p")       ('neotree-previous-line)
+   (kbd "C-p")     ('neotree-previous-line)
+   (kbd "n")       ('neotree-next-line)
+   (kbd "C-n")     ('neotree-next-line)
+   (kbd "A")       ('neotree-stretch-toggle)
+   (kbd "U")       ('neotree-select-up-node)
+   (kbd "D")       ('neotree-select-down-node)
+   (kbd "H")       ('neotree-hidden-file-toggle)
+   (kbd "S")       ('neotree-select-previous-sibling-node)
+   (kbd "s")       ('neotree-select-next-sibling-node)
+   (kbd "C-x C-f") ('find-file-other-window)
+   (kbd "C-x 1")   ('neotree-empty-fn)
+   (kbd "C-x 2")   ('neotree-empty-fn)
+   (kbd "C-x 3")   ('neotree-empty-fn)
+   (kbd "C-c C-f") ('find-file-other-window)
+   (kbd "C-c C-c") ('neotree-change-root)
+   (kbd "C-c c")   ('neotree-dir)
+ 
+   (kbd "C-c C-n") ('neotree-create-node)
+   (kbd "C-c C-d") ('neotree-delete-node)
+   (kbd "C-c C-r") ('neotree-rename-node)
+   (kbd "C-c C-p") ('neotree-copy-node)
+
+
+* WEB-MODE
+   ("a/" . "<a href=\"|\"></a>")
+   ("b/" . "<table><tbody><tr><td>|</td><td></td></tr></tbody></table>")
+   ("c/" . "<div class=\"|\"></div>")
+   ("d/" . "<div>|</div>")
+   ("e/" . "<em>|</em>")
+   ("f/" . "<form>|</form>")
+   ("g/" . "<strong>|</strong>")
+   ("h/" . "<h1>|</h1>")
+   ("i/" . "<img src=\"|\" />")
+   ("j/" . "<script>|</script>")
+   ("l/" . "<li>|</li>")
+   ("m/" . "<main>|</main>")
+   ("n/" . "<input type=\"|\" />")
+   ("p/" . "<p>|</p>")
+   ("q/" . "<quote>|</quote>")
+   ("s/" . "<span>|</span>")
+   ("t/" . "<td>|</td>")
+   ("u/" . "<ul><li>|</li><li></li></ul>")
+   ("x/" . "<textarea>|</textarea>")
+   ("2/" . "<h2>|</h2>")
+   ("3/" . "<h3>|</h3>")
+   ("?/" . "<?php | ?>")
+
+
+
+
+
+
+

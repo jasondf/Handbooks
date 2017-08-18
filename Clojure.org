@@ -1,0 +1,1063 @@
+#+TITLE: Clojure Handbook
+
+* 关于我为什么要折腾Clojure
+
+- *想学习函数式编程*
+
+ 那为什么不选Scala呢，同样是运行在JVM上的语言？感觉Scala想兼顾所有的事情，把自己搞的太复杂了。
+ 而且用Scala的话，我可能会不自觉的偏到面向对象编程上去。
+
+- *Lisp很酷*
+
+  一直觉得上古时代的Lisp很酷，Clojure作为它的一个dialect对我很有吸引力。
+  The beauty of Lisp.
+
+- *Emacs是我最喜欢的编辑器*
+
+  Clojure属于动态类型语言，IDE能做的辅助工作很有限，而Emacs可以很好的完成工作。
+  还有，Vim狗们，我懒得跟你们啰嗦。
+
+- *大爷就是想折腾这个！*
+
+  *So what!!!*
+
+* 环境安装与配置
+
+- *查看版本信息*
+
+  我安装的时候版本为2.7.1，和github上的版本一致(https://github.com/technomancy/leiningen)。
+
+  #+BEGIN_SRC shell
+    $ brew info leiningen 
+  #+END_SRC
+
+- *安装*
+
+  #+BEGIN_SRC shell
+    $ brew install leiningen 
+  #+END_SRC
+
+- *创建新项目*
+
+  #+BEGIN_SRC shell
+    $ lein new app clojure-noob
+  #+END_SRC
+
+- *运行项目*
+  
+  运行项目的时候leiningen会自动下载clojure的依赖包：clojure-1.8.0.jar，并将其存储至“~/.m2/repository/org/clojure/clojure/1.8.0/”目录下。但是我在练习的时候没有下载成功，所以从网站clojure.org上直接下载了压缩包，然后把jar文件复制进去了。
+
+  至项目根目录下运行：
+  
+  #+BEGIN_SRC shell
+    $ lein run
+  #+END_SRC
+
+  如果要在其它没有安装Leiningen的环境下运行项目，则需要将项目创建为一个stand-alone文件(此文件会存储为：target/uberjar/clojure-noob-0.1.0-SNAPSHOT-standalone.jar)，然后通过java运行：
+
+  #+BEGIN_SRC shell
+    lein uberjar
+    java -jar target/uberjar/clojure-noob-0.1.0-SNAPSHOT-standalone.jar
+  #+END_SRC 
+
+- *启动nREPL服务器*
+
+  在nREPL服务器界面中可以做简单的代码练习。
+  如果在终端中启动了nREPL服务器，可以在Emacs中调用cider-connect进行连接。
+
+  #+BEGIN_SRC shell
+    $ lein repl
+  #+END_SRC
+
+- *配置Emacs开发环境*
+
+  主要安装cider和clojre-mode这两个包就可以了。为了编写代码方便，可以安装paredit包(处理括号更容易……)。
+
+  | Key     | Command              | Description                                       |
+  |---------+----------------------+---------------------------------------------------|
+  | C-c M-j | cider-jack-in        | 为当前项目启动nREPL服务器并连接                   |
+  | C-c M-n | cider-repl-set-ns    | 将namespace设置为当前clj文件顶端所指定的namespace |
+  | C-c C-k | cider-load-buffer    | 将buffer内容加载至nREPL                           |
+  | C-c C-e | cider-eval-last-sexp | 对光标前的表达式求值                              |
+  | C-c M-c | cider-connect        | 连接至nREPL服务器(指定host和port)                 |
+
+  *paredit mode*
+
+  | Key            | Command                           | Description                                             |
+  |----------------+-----------------------------------+---------------------------------------------------------|
+  | M-(            | paredit-wrap-round                | 用括号将光标后的表达式括起来                            |
+  | M-)            | paredit-close-round-and-newline   | 在当前括号后面添加换行，并重新缩进代码                  |
+  | C-right, C-)   | paredit-forward-slurp-sexp        | 将当前括号外右侧的下一个表达式移入                      |
+  | C-left, C-}    | paredit-forward-barf-sexp         | 将当前括号中最右侧的表达式移出                          |
+  | C-M-left, C-(  | paredit-backward-slurp-sexp       | 将当前括号外左侧的前一个表达式移入                      |
+  | C-M-right, C-{ | paredit-backward-barf-sexp        | 将当前括号内最左侧的表达式移出                          |
+  | C-M-f, C-M-b   | paredit-forward, paredit-backward | 移动光标至右侧/左侧括号(与光标当前所在位置的括号相匹配) |
+
+- *学习资料*
+
+  使用Brave Clojure网站(http://www.braveclojure.com/)的教程：Clojure for the Brave and True。
+
+* 语法
+
+** 格式
+
+- 数据结构的文字表示
+  - number：1
+  - character：\a \b \c
+  - string："a string"
+  - map：{:a "hello" :b "world"}
+  - vector：["a" "vector" "of" "strings"]
+  - set：#{"a" "set" "contains" :a "and" 1}
+  - list：'("a list contains" :a "and" 2)
+
+- 操作表达式：(operator operand1 operand2 ... operandn)
+  - (+ 1 2 3) ; => 6
+  - (str "It is " "a string " "here.") ; => "It is a string here."
+
+** 控制语句
+
+*** if
+
+*语法结构：*
+
+#+BEGIN_SRC clojure
+  (if boolean-form
+    then-form
+    optional-else-form)
+#+END_SRC
+
+*返回值：*
+
+#+BEGIN_SRC clojure
+  (if true
+    "By Zeus's hammer!"
+    "By Aquaman's trident!")
+  ; => "By Zeus's hammer!"
+
+  (if false
+    "By Zeus's hammer!"
+    "By Aquaman's trident!")
+  ; => "By Aquaman's trident!"
+#+END_SRC
+
+*省略else分支的返回值：*
+
+#+BEGIN_SRC clojure
+  (if false
+    "By Odin's Elbow!")
+  ; => nil
+#+END_SRC
+
+*注意：* "if"是根据form的位置确定form的所在分支的(then分支还是else分支)，所以每个分支只能有一个form。如果要执行多条，需要使用"do"操作符。
+
+*** do
+
+"do"操作符允许一对括号中包含多个form，并将其逐一运行。即，让你可以在"if"的每个分支中都可以做多件事情。
+
+#+BEGIN_SRC clojure
+  (if true
+    (do (println "Success!")
+        "By Zeus's hammer!")
+    (do (println "Failure!")
+        "By Aquaman's trident!"))
+  ; => Success!
+  ; => "By Zeus's hammer!"
+#+END_SRC
+
+其中："Success!"是打印在REPL中的，而最后一条语句"By Zeus's hammer!"的结果是if语句的返回值。
+
+*** when
+
+"when"操作符像是"if"和"do"的组合，但是不包含"else"分支：
+
+#+BEGIN_SRC clojure
+  (when true
+    (println "Success!")
+    "abra cadabra")
+  ; => Success!
+  ; => "abra cadabra"
+#+END_SRC
+
+*应用场景：* 在某些条件为true的时候需要做多件事情，在条件为false的时候总是返回nil。
+
+*** nil，true，false，真值判断，相等和布尔表达式
+
+在Clojure中，"*nil*"表示没有值(no value)。可以使用方法"nil?"来检查一个值是否为"nil"：
+
+#+BEGIN_SRC clojure
+  (nil? 1)
+  ; => false
+
+  (nil? nil)
+  ; => true
+#+END_SRC
+
+"*nil*"和"*false*"都可以用来表示逻辑假，而其它值都为逻辑真：
+
+#+BEGIN_SRC clojure
+  (if "bears eat beets"
+    "bears beets Battlestar Galactica")
+  ; => "bears beets Battlestar Galactica"
+
+  (if nil
+    "This won't be the result because nil is falsey"
+    "nil is falsey")
+  ; => "nil is falsey"
+#+END_SRC
+
+Clojure判断相等的操作符为"*=*"：
+
+#+BEGIN_SRC clojure
+  (= 1 1)
+  ; => true
+
+  (= nil nil)
+  ; => true
+
+  (= 1 2)
+  ; => false
+
+  (= "hello" "hello")
+  ; => true
+
+  (= {:a "hello" :b 1} {:b 1 :a "hello"})
+  ; => true
+
+  (= #{1 2 3} #{3 2 1})
+  ; => true
+#+END_SRC
+
+"*or*"、"*and*"和"*not*"是Clojure的布尔操作符。"or"返回第一个为"真"的值或者最后一个值；"and"返回第一个为"假"的值或者最后一个值；"not"只返回true或者false。
+
+先来看"or"：
+
+#+BEGIN_SRC clojure
+  (or false nil :large_I_mean_venti :why_cant_I_just_say_large)
+  ; => :large_I_mean_venti
+
+  (or (= 0 1) (= "yes" "no"))
+  ; => false
+
+  (or nil)
+  ; => nil
+#+END_SRC
+
+再来看"and"：
+
+#+BEGIN_SRC clojure
+  (and :free_wifi :hot_coffee)
+  ; => :hot_coffee
+
+  (and :feelin_super_cool nil false)
+  ; => nil
+#+END_SRC
+
+再看"not"：
+
+#+BEGIN_SRC clojure
+  (not (string? "hello world"))
+  ; => false
+
+  (not (or false nil :hello))
+  ; => false
+#+END_SRC
+
+** 使用"def"为值命名
+
+在Clojure中使用"*def*"将一个名称绑定(*bind*)至一个值：
+
+#+BEGIN_SRC clojure
+  (def failed-protagonist-names
+    ["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"])
+
+  failed-protagonist-names
+  ; => ["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]
+#+END_SRC
+
+*注意：* 在这里我们使用的术语是"*bind*"，而在其它语言中一般会说"赋值给一个变量(*assigning* a value to a variable)"。并且其它语言会提倡对一个变量进行多次赋值。例如在Ruby中：
+
+#+BEGIN_SRC ruby
+  severity = :mild
+  error_message = "OH GOD! IT'S A DISASTER! WE'RE "
+  if severity == :mild
+    error_message = error_message + "MILDLY INCONVENIENCED!"
+  else
+    error_message = error_message + "DOOOOOOOMED!"
+  end
+#+END_SRC
+
+或许你会试图在Clojure中做类似的事情：
+
+#+BEGIN_SRC clojure
+  (def severity :mild)
+  (def error-message "OH GOD! IT'S A DISASTER! WE'RE ")
+  (if (= severity :mild)
+    (def error-message (str error-message "MILDLY INCONVENIENCED!"))
+    (def error-message (str error-message "DOOOOOOOMED!")))
+#+END_SRC
+
+但是，在Clojure中这样做会导致程序的行为很难理解。下面是Clojure风格的操作：
+
+#+BEGIN_SRC clojure
+  (defn error-message
+    [severity]
+    (str "OH GOD! IT'S A DISASTER! WE'RE "
+         (if (= severity :mild)
+           "MILDLY INCONVENIENCED!"
+           "DOOOOOOOMED!")))
+
+  (error-message :mild)
+  ; => "OH GOD! IT'S A DISASTER! WE'RE MILDLY INCONVENIENCED!"
+#+END_SRC
+
+* 数据结构
+
+Clojure中所有的数据结构都是不可改变的(*immutable*)，意即你不可以对它们进行就地修改。例如，在Ruby里可以对failed_protagonist_names中索引为0的元素进行重新赋值：
+
+#+BEGIN_SRC ruby
+  failed_protagonist_names = [
+    "Larry Potter",
+    "Doreen the Explorer",
+    "The Incredible Bulk"
+  ]
+  failed_protagonist_names[0] = "Gary Potter"
+
+  failed_protagonist_names
+  # => [
+  #   "Gary Potter",
+  #   "Doreen the Explorer",
+  #   "The Incredible Bulk"
+  # ]
+#+END_SRC
+
+但在Clojure中没有与之相对应的操作。
+
+** Numbers
+
+下面是整数、浮点数和比值：
+
+#+BEGIN_SRC clojure
+  93
+  1.2
+  1/5
+#+END_SRC
+
+*** Function Table
+
+| Function            |     Return | Description  |
+|---------------------+------------+--------------|
+| (+ 3 5 2)           |         10 | 加法         |
+| (- 10 4 3)          |          3 | 减法         |
+| (* 2 3 4)           |         24 | 乘法         |
+| (/ 3 5)             |        3/5 | 分数形式     |
+| (/ 3 4 5)           |       3/20 | 分数形式     |
+| (quot 8 5)          |          1 | 商           |
+| (rem 8 5)/(mod 8 5) |          3 | 余数/取模    |
+| (inc 5)             |          6 | 加1          |
+| (dec 5)             |          4 | 减1          |
+| (min 5 6 7)         |          5 | 最小值       |
+| (max 5 6 7)         |          7 | 最大值       |
+| (=, <, <=, >, >=)   | true/false | 比较大小     |
+| (zero? (- 5 5))     |       true | 是否为0？    |
+| (pos? (- 5 3))      |       true | 是否为正数？ |
+| (neg? (- 3 5))      |       true | 是否为负数？ |
+| (number? (/ 3 5))   |       true | 是否为数字？ |
+
+** Strings
+
+Clojure只允许使用双引号表示字符串，'Lord Voldemort'不是有效的字符串。
+
+#+BEGIN_SRC clojure
+  "Lord Voldemort"
+  "\"He who must not be named\""
+  "\"Great cow of Moscow!\" - Hermes Conrad"
+#+END_SRC
+
+Clojure不提供对字符串的插补操作，只允许使用"str"函数串联字符串。
+
+#+BEGIN_SRC clojure
+  (def name "Chewbacca")
+  (str "\"Uggllglglglglglglglll\" - " name)
+  ; => "Uggllglglglglglglglll" - Chewbacca
+#+END_SRC
+
+*** Function Table
+
+| Function           | Return | Description             |
+|--------------------+--------+-------------------------|
+| (str "a " "b")     | "a b"  | 串联                    |
+| (subs "hello" 1)   | "ello" | 取子字符串，索引从0开始 |
+| (subs "hello" 1 4) | "ell"  |                         |
+| (string? "hello")  | true   | 是否为字符串？          |
+| (string? \a)       | false  |                         |
+
+** Maps
+
+Map是存储键-值对的集合。Clojure中有三种map实现方式：hash map、sorted map和array map，它们分别使用哈希表、二叉树和数组作为底层实现。Array map适用于较小的map，hash map和sorted map的使用要基于应用场合的情况。
+Hash map是无序的，key的位置不确定；array map是有序的，根据元素的初始顺序排序；sorted map对key进行比较，根据数字或字母表进行排序。
+
+一个空的map：
+
+#+BEGIN_SRC clojure
+  {}
+#+END_SRC
+
+下面的例子中，:first-name和:last-name是keywords。
+
+#+BEGIN_SRC clojure
+  {:first-name "Charlie"
+   :last-name "McFishwich"}
+#+END_SRC
+
+下面的例子将"string-key"和"+"函数相联系起来：
+
+#+BEGIN_SRC clojure
+  {"string-key" +}
+#+END_SRC
+
+Map可以存在嵌套：
+
+#+BEGIN_SRC clojure
+  {:name {:first "John" :middle "Jacob" :last "Jingleheimerschmidt"}}
+#+END_SRC
+
+请注意，map的值(value)可以是任意类型：string，number，map，vector，甚至是函数(function)。
+
+另外，还可以使用hash-map函数创建map：
+
+#+BEGIN_SRC clojure
+  (hash-map :a 1 :b 2)
+  ; => {:a 1 :b 2}
+#+END_SRC
+
+可以使用get函数查看map中的值。在下面的两个示例中，我们使用get函数取得给定map中key为":b"的值(value)。
+
+#+BEGIN_SRC clojure
+  (get {:a 0 :b 1} :b)
+  ; => 1
+
+  (get {:a 0 :b {:c "ho hum"}} :b)
+  ; => {:c "ho hum"}
+#+END_SRC
+
+如果没有找到给定的key，get函数会返回nil。或者你可以指定一个供返回的默认值，例如："unicorns?"。
+
+#+BEGIN_SRC clojure
+  (get {:a 0 :b 1} :c)
+  ; => nil
+
+  (get {:a 0 :b 1} :c "unicorns?")
+  ; => "unicorns?"
+#+END_SRC
+
+使用get-in函数可以查看嵌套map中的值：
+
+#+BEGIN_SRC clojure
+  (get-in {:a 0 :b {:c "ho hum"}} [:b :c])
+  ; => "ho hum"
+#+END_SRC
+
+另外一种查看map中的值的方法是将map当作一个函数，key作为其参数：
+
+#+BEGIN_SRC clojure
+  ({:name "The Human Coffeepot"} :name)
+  ; => "The Human Coffeepot"
+#+END_SRC
+
+还可以对map做一件很酷的事就是使用keywords作为函数来查看map的值，详见下一节，keywords。
+
+*** Function table
+
+*创建：*
+
+| Function                              | Return                   | (type a-map) & Notice             |
+|---------------------------------------+--------------------------+-----------------------------------|
+| {:a 1 :b 2 :c 3}                      | {:a 1 :b 2 :c 3}         | clojure.lang.PersistentHashMap    |
+| (hash-map)                            | {}                       | key是无序的                       |
+| (hash-map :key1 1 :key2 2)            | {:key1 1 :key2 2}        |                                   |
+|---------------------------------------+--------------------------+-----------------------------------|
+| (array-map :b 1 :a 2 :c 3)            | {:b 1 :a 2 :c 3}         | clojure.lang.PersistentArrayMap   |
+| (zipmap [:a :b :c] [1 2 3 4])         | {:c 3, :b 2, :a 1} ;     | *注意* key与value的匹配和元素顺序 |
+| (frequencies [1 2 1 1 "a" "b" "a"])   | {1 3, 2 1, "a" 2, "b" 1} | *注意* 元素顺序                   |
+|---------------------------------------+--------------------------+-----------------------------------|
+| (sorted-map :b 2 :a 1)                | {:a 1 :b 2}              | clojure.lang.PersistentTreeMap    |
+| (sorted-map 0 0 2 2 1 1)              | {0 0, 1 1, 2 2}          | 根据key排序                       |
+| (sorted-map-by > 1 "a", 2 "b", 3 "c") | {3 "c", 2 "b", 1 "a"}    | 指定比较器                        |
+| (sorted-map-by < 1 "a", 2 "b", 3 "c") | {1 "a", 2 "b", 3 "c"}    |                                   |
+
+*操作：*
+
+| Function     | Example                                     | Return                 | Description                   |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| count(计数)  | (count {:a 1 :b 2})                         | 2                      | map中元素的个数               |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| contains?    | (contains? {:a "hello" :b "world"} :a)      | true                   | 是否包含指定key               |
+|              | (contains? {:a "hello" :b "world"} "world") | false                  | 不可以判断是否包含value       |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| assoc(更新)  | (assoc {} :k1 "v1" :k2 2)                   | {:k2 2, :k1 "v1"}      | 将key-value加入已有map        |
+|              | (assoc {:k1 "old"} :k1 "new")               | {:key1 "new"}          | key相同则更新value            |
+|              | (assoc {:k1 "old"} :k2 "new")               | {:k1 "old", :k2 "new"} | key不同则新增                 |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| assoc-in     | (assoc-in {:k1 "v1" :k2 26} [:k2] 36)       | {:k1 "v1", :k2 36}     | 更新指定key的value            |
+| 类似于assoc  | (assoc-in {:k1 "v1"} [:k2] 36)              | {:k1 "v1", :k2 36}     | 指定key不存在则新增           |
+|              | (assoc-in {} [:k1] 36)                      | {:k1 36}               | 加入新元素                    |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| upate-in     | (update-in {:b 30} [:b] #(inc %))           | {:b 31}                | 使用函数进行更新              |
+|              | (update-in {:a 3} [:a] / 4 5)               | {:a 3/20}              | value除4再除5                 |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| dissoc(删除) | (dissoc {:a 1 :b 2 :c 3} :b)                | {:a 1, :c 3}           | 丢弃key为:b的元素             |
+|              | (dissoc {:a 1 :b 2 :c 3})                   | {:a 1, :c 3, :b 2}     | 不加key参数时直接返回         |
+|              | (dissoc {:a 1 :b 2 :c 3} :d)                | {:a 1, :c 3, :b 2}     | 没有指定的key时直接返回       |
+|              | (dissoc {:a 1 :b 2 :c 3} :a :b :c)          | {}                     |                               |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| find(查找)   | (find {:a 1 :b 2} :c)                       | nil                    |                               |
+|              | (find {:a 1 :b 2} :a)                       | [:a 1]                 |                               |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| key          | (key (first {:a 1 :b 2}))                   | :a                     | 单个元素的key                 |
+|              | (map key {:a 1 :b 2})                       | (:a :b)                | 不可以直接作用在map上         |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| keys         | (keys {:a 1 :b 2})                          | (:a :b)                | 返回map中的key组成list        |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| val          | (val (first {:a 1 :b 2}))                   | 1                      | 单个元素的value               |
+|              | (map val {:a 1 :b 2})                       | (1 2)                  | 不可以直接作用在map上         |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| vals         | (vals {:a 1 :b 2})                          | (1 2)                  | 返回map中的value组成list      |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| get          | (get {:a 1 :b 2} :b)                        | 2                      | 返回指定key的对应的value      |
+|              | (get {:a 1 :b 2} :z "missing")              | "missing"              | 返回提示信息                  |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| get-in       | (get-in {:a 0 :b {:c "ho"}} [:b :c])        | "ho"                   | 适用于多层嵌套                |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| select-keys  | (select-keys {:a 1 :b 2} [:a])              | {:a 1}                 | 返回包含指定key的map          |
+|              | (select-keys {:a 1 :b 2 :c 3} [:a :c])      | {:a 1, :c 3}           |                               |
+|              | (select-keys {:a 1 :b 2} [:a :c])           | {:a 1}                 |                               |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| merge(合并)  | (merge {:a "a"} {:b "b"})                   | {:a "a", :b "b"}       | 合并为一个新的map             |
+|              | (merge {:a "a"} {:a "b"})                   | {:a "b"}               |                               |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| merge-with   | (merge-with + {:b 2} {:a 2 :b 98})          | {:b 100, :a 2}         | 以函数处理key相同的value      |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| rseq(逆转)   | (rseq (sorted-map :a 1 :c 2 :b 4))          | ([:c 2] [:b 4] [:a 1]) |                               |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| subseq(筛选) | (subseq (sorted-map :a 1 :c 2 :b 4) < :b)   | ([:a 1])               | 筛选key值，返回满足条件的元素 |
+|              | (subseq (sorted-map :a 1 :c 2 :b 4) >= :b)  | ([:b 4] [:c 2])        | 支持：>, >=, <, <=            |
+|--------------+---------------------------------------------+------------------------+-------------------------------|
+| rsubseq      | (rsubseq (sorted-map :a 1 :c 2 :b 4) >= :b) | ([:c 2] [:b 4])        | 筛选之后再逆转                |
+
+** Keywords
+
+Keyword主要用来在map中作为key使用。下面是一些keyword的示例：
+
+#+BEGIN_SRC clojure
+  :a
+  :rumplestiltsken
+  :34
+  :_?
+#+END_SRC
+
+可以将keyword作为函数(function)来使用，用以查看在一个数据结构中其相对应的值。例如，可以在下面的map中查看":a"对应的值：
+
+#+BEGIN_SRC clojure
+  (:a {:a 1 :b 2 :c 3})
+  ; => 1
+#+END_SRC
+
+这与使用get函数是一样的：
+
+#+BEGIN_SRC clojure
+  (get {:a 1 :b 2 :c 3} :a)
+  ; => 1
+#+END_SRC
+
+同样的，你也可以为其提供默认值，像get函数一样：
+
+#+BEGIN_SRC clojure
+  (:d {:a 1 :b 2 :c 3} "No gnome knows homes like Noah knows")
+  ; => "No gnome knows homes like Noah knows"
+#+END_SRC
+
+把keyword当作函数使用，这简洁的令人愉悦，真正的Clojurist一直都这么做。你也应该这么做！
+
+** Vectors
+
+Vector类似于数组(array)，是一个从0开始进行索引的集合。下面是vector的写法：
+
+#+BEGIN_SRC clojure
+  [3 2 1]
+#+END_SRC
+
+现在我们返回一个vector中的第0个元素(element)：
+
+#+BEGIN_SRC clojure
+  (get [3 2 1] 0)
+  ; => 3
+#+END_SRC
+
+下面是另一个使用索引返回值的例子：
+
+#+BEGIN_SRC clojure
+  (get ["a" {:name "Pugsley Winterbottom"} "c"] 1)
+  ; => {:name "Pugsley Winterbottom"}
+#+END_SRC
+
+能够看到，vector中的元素可以是任意类型，并且可以混合使用。还要注意的是，我们使用get方法查看vector中的值，与处理map一样。
+
+可以使用vector函数创建vector：
+
+#+BEGIN_SRC clojure
+  (vector "creepy" "full" "moon")
+  ; => ["creepy" "full" "moon"]
+#+END_SRC
+
+使用conj函数可以向vector中添加元素。元素会被添加至vector的末尾：
+
+#+BEGIN_SRC clojure
+  (conj [1 2 3] 4)
+  ; => [1 2 3 4]
+#+END_SRC
+
+在Clojure中，除了vector以外，还可以使用list来存储序列。
+
+*** Function Table
+
+*创建*
+
+| Function              | Return                | (type a-vector) & Notice      |
+|-----------------------+-----------------------+-------------------------------|
+| ["hello" "world" 1 2] | ["hello" "world" 1 2] | clojure.lang.PersistentVector |
+| (vector "hello" 1 2)  | ["hello" 1 2]         |                               |
+
+*操作*
+
+| Function          | Example                            | Return     | Description              |
+|-------------------+------------------------------------+------------+--------------------------|
+| get               | (get ["hello" 34 45] 0)            | "hello"    | 取得vector中的元素       |
+|                   | (get ["hello" 34 45] 3 "no value") | "no value" | 指定默认值               |
+| get-in            | (get-in [1 [2 3] 4] [1 1])         | 3          | 嵌套取得元素             |
+| first/second/last | (first [:a :b :c])                 | :a         | 取得vector中的元素       |
+|-------------------+------------------------------------+------------+--------------------------|
+| conj              | (conj [1 2 3] 4)                   | [1 2 3 4]  | 将元素添加至vector*末尾* |
+|-------------------+------------------------------------+------------+--------------------------|
+| contains?         | (contains? [1 2 3] 2)              | true       | 判断vector中是否包含元素 |
+
+** Lists
+
+List与vector类似，都是值的线性集合。但是也有一些差异。例如，不可以使用get函数获取list中的元素。List的写法是直接将元素加入括号中，括号前以单引号开头：
+
+#+BEGIN_SRC clojure
+  '(1 2 3 4)
+  ; => (1 2 3 4)
+#+END_SRC
+
+需要注意的是，REPL在打印list的时候并不包括单引号。如果需要取得list中的一个元素，可以使用"nth"函数：
+
+#+BEGIN_SRC clojure
+  (nth '(:a :b :c) 0)
+  ; => :a
+
+  (nth '(:a :b :c) 2)
+  ; => :c
+#+END_SRC
+
+虽然在这本书中不会牵涉太多关于执行效率的细节问题，但需要知道的是，使用nth函数从list中获取一个元素要比使用get函数从vector中获取一个元素慢一些。这是因为Clojure需要在list中穿过所有n个元素才能到达nth元素，而在vector中最多几下就可以通过索引访问到元素。
+
+List中的值可以是任意类型，你可以使用list函数创建list：
+
+#+BEGIN_SRC clojure
+  (list 1 "two" {3 4})
+  ; => (1 "two" {3 4})
+#+END_SRC
+
+向list中添加元素的时候，元素会被添加至list的起始位置：
+
+#+BEGIN_SRC clojure
+  (conj '(1 2 3) 4)
+  ; => (4 1 2 3)
+#+END_SRC
+
+那么如何决定什么时候使用list，什么时候使用vector呢？一个经验法则是：如果你需要便捷的向一个序列的起始位置添加元素，或者你在编写宏指令(marco)，那么需要使用list。否则的话使用vector。
+
+*** Function Table
+
+*创建*
+
+| Function             | Return          | (type a-list) & Notice      |
+|----------------------+-----------------+-----------------------------|
+| '(1 2 3 4)           | (1 2 3 4)       | clojure.lang.PersistentList |
+| (list 1 "two" {3 4}) | (1 "two" {3 4}) |                             |
+
+*操作*
+
+| Function          | Example              | Return      | Description            |
+|-------------------+----------------------+-------------+------------------------|
+| nth               | (nth '(:a :b :c) 0)  | :a          | 取得list中的元素       |
+|                   | (nth '(:a :b :c) 3 ) | *Exception* |                        |
+| first\second\last | (first '(:a :b :c))  | :a          | 取得list中的元素       |
+|-------------------+----------------------+-------------+------------------------|
+| conj              | (conj '(1 2 3) 4)    | (4 1 2 3)   | 将元素添加至list*起始* |
+
+** Sets
+
+Set是不包含重复元素的集合。Clojure中有两种set：hash set和sorted set，分别使用哈希表和二叉树进行底层实现。下面是hash set的写法：
+
+#+BEGIN_SRC clojure
+  #{"kurt vonnegut" 20 :icicle}
+#+END_SRC
+
+可以使用hash-set函数创建set：
+
+#+BEGIN_SRC clojure
+  (hash-set 1 1 2 2)
+  ; => #{1 2}
+#+END_SRC
+
+注意，当一个值重复出现的时候，在set只会有一个。如果试图向set添加其中已经存在的值，set中该值仍然只有一个：
+
+#+BEGIN_SRC clojure
+  (conj #{:a :b} :b)
+  ; => #{:a :b}
+#+END_SRC
+
+使用set函数可以根据已有vector和list创建set：
+
+#+BEGIN_SRC clojure
+  (set [3 3 3 4 4])
+  ; => #{3 4}
+#+END_SRC
+
+可以使用contains?函数检查set的成员，也可以使用get函数或者keyword。contains?函数的返回值为true或false，而get和keyword会返回该值(如果该值存在)或nil(该值不存在)。
+
+下面是使用contains?的示例：
+
+#+BEGIN_SRC clojure
+  (contains? #{:a :b} :a)
+  ; => true
+
+  (contains? #{:a :b} 3)
+  ; => false
+
+  (contains? #{nil} nil)
+  ; => true
+#+END_SRC
+
+下面是使用keyword的示例：
+
+#+BEGIN_SRC clojure
+  (:a #{:a :b})
+  ; => :a
+#+END_SRC
+
+下面是使用get的示例：
+
+#+BEGIN_SRC clojure
+  (get #{:a :b} :a)
+  ; => :a
+
+  (get #{:a nil} nil)
+  ; => nil
+
+  (get #{:a :b} "kurt vonnegut")
+  ; => nil
+#+END_SRC
+
+注意，使用get来检测一个set中是否包含nil的话，会总是返回nil，这会让人比较迷惑。使用contains?函数是检测set中元素是否存在的更好方法。
+
+*** Function Table
+
+| Function                                     | Return                  | Description                    |
+|----------------------------------------------+-------------------------+--------------------------------|
+| #{:java :lisp :c++}                          | #{:c++ :lisp :java}     | clojure.lang.PersistentHashSet |
+| (hash-set :a :b :c)                          | #{:a :c :b}             |                                |
+| (hash-set 3 2 1 2)                           | #{1 3 2}                | 去除重复元素                   |
+|----------------------------------------------+-------------------------+--------------------------------|
+| (sorted-set 3 2 1)                           | #{1 2 3}                | clojure.lang.PersistentTreeSet |
+| (sorted-set 3 2 1 1)                         | #{1 2 3}                | 去除重复元素                   |
+| (sorted-set-by > 3 5 8 2 1)                  | #{8 5 3 2 1}            | 指定排序规则                   |
+| (sorted-set-by < 3 5 8 2 1)                  | #{1 2 3 5 8}            |                                |
+|----------------------------------------------+-------------------------+--------------------------------|
+| (set '(1 1 2 3 4 4 5))                       | #{1 2 3 4 5}            | 从其他类型集合创建set          |
+| (set [1 1 2 3 4 4 5])                        | #{1 2 3 4 5}            |                                |
+| (set "abccdd")                               | {\a \b \c \d}           |                                |
+| (set {:a 1 :b 2 :c 3})                       | #{[:c 3] [:b 2] [:a 1]} |                                |
+|----------------------------------------------+-------------------------+--------------------------------|
+| (get #{:a :b} :a)                            | :a                      |                                |
+| (get #{:a nil} nil)                          | nil                     |                                |
+| (get #{:a :b} "kurt vonnegut")               | nil                     |                                |
+|----------------------------------------------+-------------------------+--------------------------------|
+| (:a #{:a :b})                                | :a                      | 使用keyword                    |
+|----------------------------------------------+-------------------------+--------------------------------|
+| (contains? #{:a :b} :a)                      | true                    | 判断set中是否包含指定元素      |
+|----------------------------------------------+-------------------------+--------------------------------|
+| (count #{1 2 3})                             | 3                       | set中元素的个数                |
+|----------------------------------------------+-------------------------+--------------------------------|
+| (conj #{1 3} 1 5 7)                          | #{1 3 5 7}              | 将元素添加至set                |
+|----------------------------------------------+-------------------------+--------------------------------|
+| (disj #{1 3 5 7} 3 7 6)                      | #{1 5}                  | 从set中删除元素                |
+|----------------------------------------------+-------------------------+--------------------------------|
+| (clojure.set/union #{1 2 3} #{1 2 4})        | #{1 2 3 4}              | 合并                           |
+| (clojure.set/select even? #{1 2 3 4 5})      | #{2 4}                  | 筛选                           |
+| (clojure.set/difference #{1 2 3} #{1 2 4})   | #{3}                    | 取差集                         |
+| (clojure.set/intersection #{1 2 3} #{1 2 4}) | #{1 2}                  | 取交集                         |
+
+* 函数
+
+** 调用函数
+
+在Clojure中所有运算(operations)的基本语法是：(operator operand operand operand ...)。函数调用不过是运算的另一种说法，即，operator是一个函数或者函数表达式(返回值为函数的表达式)。
+
+#+BEGIN_SRC clojure
+  (+ 1 2 3)
+  ; => 6
+
+  ((and (= 1 1) +) 1 2 3)
+  ; => 6
+
+  ((first [+ 0]) 1 2 3)
+  ; => 6
+#+END_SRC
+
+如果一个函数可以接收函数作为参数或者返回值为函数，那么称这个函数为高阶函数(higher-order function)。带有高阶函数的编程语言被称为支持first-class function，因为你可以像处理其他类型数据(例如，数字、vectors)一样的处理函数。
+
+Clojure会递归的对所有参数求值(evaluate)然后再传递给函数。
+
+#+BEGIN_SRC clojure
+  (+ (inc 199) (/ 100 (- 7 2)))
+  (+ 200 (/ 100 (- 7 2))) ; evaluated "(inc 199)"
+  (+ 200 (/ 100 5)) ; evaluated (- 7 2)
+  (+ 200 20) ; evaluated (/ 100 5)
+  220 ; final evaluation
+#+END_SRC
+
+** 函数调用、宏(Macro)调用和特殊格式(Special Form)
+
+在之前的章节中已经见到过了特殊格式："定义(def)"和"if"表达式。特殊格式之所以"特殊"，是指区别于函数调用，它们并不总是对所有的运算元(operand)求值。例如，"if"表达式只会对满足判断条件的一个分支求值。
+
+特殊格式的另一个特点是，不能被用作函数的参数。
+
+宏(Macro)在这一方面与特殊格式类似，即，对于运算元的求值方式与函数调用不同；同样也不可以作为参数传递给函数。
+
+** 定义函数
+
+函数定义由5个部分组成：
+ - defn
+ - 函数名称
+ - 对函数的描述文档(可选)
+ - 包含于方括号中的参数列表
+ - 函数体
+ 
+ #+BEGIN_SRC clojure
+   (defn cheer
+     "return a cheer string"
+     [name]
+     (str "oh, " name " you are the best"))
+
+   (cheer "Zelda")
+   ; => "oh, Zelda you are the best"
+ #+END_SRC
+
+*** Docstring
+
+可以在REPL中使用(doc fn-name)查看函数的说明文档，例如，(doc map)。
+
+*** 参数和数量(Arity)
+
+Clojure的函数可以被定义为接收0个或多个任意类型的参数。
+
+函数支持参数数量重载(arity overloading)。这表示可以定义一个函数，根据参数数量运行不同的函数体。需要注意的是：每一个参数数量的定义必须包含在一对括号中，并且有一个参数列表。
+
+#+BEGIN_SRC clojure
+  (defn x-chop
+    "Describe the kind of chop you're inflicting on someone"
+    ([name chop-type]
+       (str "I " chop-type " chop " name "! Take that!"))
+    ([name]
+     (x-chop name "karate")))
+
+  (x-chop "Kanye West" "slap")
+  ; => "I slap chop Kanye West! Take that!"
+
+  (x-chop "Kanye East")
+  ; => "I karate chop Kanye East! Take that!"
+#+END_SRC
+
+当然，你也可以让每个参数数量的函数体做完全不相关的事情，但这会让人感觉比较困惑。
+
+Clojure还允许通过"剩余参数(rest parameter)"来定义可变参数数量(variable-arity)的函数。大概意思是：将剩余的参数放进这个指定名称的list中。使用"&"符号指示剩余参数。
+
+#+BEGIN_SRC clojure
+  (defn shout-at
+    [someone]
+    (str "Get out of my lawn, " someone "!!!"))
+
+  (defn crazy-guy
+    [& someones]
+    (map shout-at someones))
+
+  (crazy-guy "Bill" "Tom" "Peter")
+  ; => ("Get out of my lawn, Bill!!!" "Get out of my lawn, Tom!!!" "Get out of my lawn, Peter!!!")
+#+END_SRC
+
+剩余参数可以和正常参数混合在一起传递给函数，不过剩余参数必须放在最后：
+
+#+BEGIN_SRC clojure
+  (defn favorite-things
+    [name & things]
+    (str "Hi, " name ", here are my favorite things: "
+         (clojure.string/join ", " things)))
+
+  (favorite-things "Doreen" "gum" "shoes" "kara-te")
+  ; => "Hi, Doreen, here are my favorite things: gum, shoes, kara-te"
+#+END_SRC
+
+*** 解构(Destructure)
+
+解构的基本目的是为了可以简洁的将集合内部的值绑定至指定名称。
+
+- Vector和List的解构
+
+#+BEGIN_SRC clojure
+  ;; Return the first element of a collection
+  (defn my-first
+    [[first-thing]] ; Notice that first-thing is within a vector
+    first-thing)
+
+  (my-first ["oven" "bike" "war-axe"])
+  ; => "oven"
+#+END_SRC
+
+在上面的简单示例中，函数my-first把first-thing这个标记(symbol)与传入参数的vector中的第一个元素关联起来。注意，这个关联是通过将first-thing放在vector中实现的。
+
+
+#+BEGIN_SRC clojure
+  (defn chooser
+    [[first-choice second-choice & unimportant-choices]]
+    (println (str "Your first choice is: " first-choice))
+    (println (str "Your second choice is: " second-choice))
+    (println (str "We're ignoring the rest of your choices. "
+                  "Here they are in case you need to cry over them: "
+                  (clojure.string/join ", " unimportant-choices))))
+
+  (chooser ["Marmalade", "Handsome Jack", "Pigpen", "Aquaman"])
+  ; => Your first choice is: Marmalade
+  ; => Your second choice is: Handsome Jack
+  ; => We're ignoring the rest of your choices. Here they are in case you need to cry over them: Pigpen, Aquaman
+#+END_SRC
+
+-  Map的解构
+
+#+BEGIN_SRC clojure
+  (defn announce-treasure-location
+    [{lat :lat lng :lng}]
+    (println (str "Treasure lat: " lat))
+    (println (str "Treasure lng: " lng)))
+
+  (announce-treasure-location {:lat 28.22 :lng 81.33})
+  ; => Treasure lat: 100
+  ; => Treasure lng: 50
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  (defn announce-treasure-location
+    [{:keys [lat lng]}]
+    (println (str "Treasure lat: " lat))
+    (println (str "Treasure lng: " lng)))
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  (defn receive-treasure-location
+    [{:keys [lat lng] :as treasure-location}]
+    (println (str "Treasure lat: " lat))
+    (println (str "Treasure lng: " lng))
+
+    ;; One would assume that this would put in new coordinates for your ship
+    (steer-ship! treasure-location))
+#+END_SRC
+
+*** 函数体
+
+
+
+*** 所有函数生而平等
+
+
+
+** 匿名函数
+
+- 使用"fn"创建匿名函数
+
+#+BEGIN_SRC clojure
+  (fn [param-list]
+    function body)
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  (map (fn [name] (str "Hi, " name))
+       ["Darth Vader" "Mr. Magoo"])
+  ; => ("Hi, Darth Vader" "Hi, Mr. Magoo")
+
+  ((fn [x] (* x 3)) 8)
+  ; => 24
+#+END_SRC
+
+- 将匿名函数命名
+
+#+BEGIN_SRC clojure
+  (def my-special-multiplier (fn [x] (* x 3)))
+
+  (my-special-multiplier 12)
+  ; => 36
+#+END_SRC
+
+- 另一种创建匿名函数的方法
+
+#+BEGIN_SRC clojure
+  #(* % 3)
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  (#(* % 3) 8)
+
+  ; => 24
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  (map #(str "Hi, " %)
+       ["Darth Vader" "Mr. Magoo"])
+
+  ; => ("Hi, Darth Vader" "Hi, Mr. Magoo")
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  (#(str %1 " and " %2) "cornbread" "butter beans")
+
+  ; => "cornbread and butter beans"
+#+END_SRC
+
+
+** 返回值为函数
+
+#+BEGIN_SRC clojure
+  (defn inc-maker
+    "Create a custom incrementor"
+    [inc-by]
+    #(+ % inc-by))
+
+  (def inc3 (inc-maker 3))
+
+  (inc3 7)
+
+  ; => 10
+#+END_SRC
+
+
+
+
+
+
+
+
+
+
+
+
+

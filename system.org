@@ -1,0 +1,29 @@
+#+TITLE: Mac系统常用设置
+
+- macOS 10.12允许"任何来源"的程序执行
+$ sudo spctl --master-disable
+
+- Finder显示所有隐藏文件：（取消将true改为false）
+$ defaults write com.apple.finder AppleShowAllFiles -bool true
+$ KillAll Finder
+
+- Finder标题栏显示路径
+$ defaults write com.apple.finder _FXShowPosixPathInTitle -bool TRUE;killall Finder
+取消：将true改为false
+
+- 修改截图保存位置
+$ defaults write com.apple.screencapture location /Users/jason/Documents
+$ killall SystemUIServer
+
+- 安装包管理器Homebrew
+$ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+- 复制Finder中的完整路径
+option+command+c
+
+
+
+
+
+
+

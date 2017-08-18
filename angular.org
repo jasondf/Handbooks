@@ -1,0 +1,61 @@
+#+TITLE: Angular2 Handbook
+#+OPTIONS: \n:t #换行不必输入两个
+#+OPTIONS: _:nil #禁用下划线转义
+#+OPTIONS: ^:nil
+
+* 项目环境准备
+
+** 安装node.js及npm
+
+至nodejs.org下载安装包，然后安装，完成后查看版本：
+#+BEGIN_SRC shell
+ $ node -v
+ $ npm -v
+#+END_SRC
+
+** 安装Angular CLI
+
+- 设置淘宝镜像以加快安装：
+#+BEGIN_SRC shell
+ $ npm config set registry https://registry.npm.taobao.org
+#+END_SRC
+
+- 安装typescript和typings
+#+BEGIN_SRC shell
+ $ npm install -g typescript
+ $ npm install -g typings
+#+END_SRC
+
+- 安装Angular CLI
+#+BEGIN_SRC shell
+ $ npm install -g @angular/cli
+#+END_SRC
+
+- 如果之前安装失败过，最好先卸载干净：
+#+BEGIN_SRC shell
+ $ npm uninstall -g angular-cli
+ $ npm cache clean
+#+END_SRC
+
+* 创建与运行
+
+在terminal中执行下列语句：
+#+BEGIN_SRC shell
+ $ ng new my-app
+ $ cd my-app
+ $ ng serve --open
+#+END_SRC
+命令"ng serve"会启动服务器，而加上"--open(或者-o)"参数会自动打开浏览器并连接至"localhost:4200"。
+
+
+
+
+
+
+
+
+
+
+
+
+

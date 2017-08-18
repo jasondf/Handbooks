@@ -1,0 +1,221 @@
+#+TITLE: 基于Playframework 2.6的Java应用开发
+
+Nursing Job Management: caregiver management, job dispatch, financial settlement, operation analysis.
+
+* 开发环境
+
+Mac OSX 10.11.6
+MySQL 5.7.18
+JDK 1.8
+JDBC Connector 5.1.42
+sbt 0.13.15
+playframework 2.6
+Intellij IDEA
+
+** 安装sbt
+
+#+BEGIN_SRC shell
+ $ brew install sbt
+#+END_SRC
+
+* 创建应用
+
+#+BEGIN_SRC shell
+$ cd ~/projects
+$ sbt new playframework/play-java-seed.g8
+然后按照后续提示输入项目信息。
+#+END_SRC
+ 
+#+BEGIN_SRC shell
+$ name [play-java-seed]: (项目名称，例如my-first-app)
+$ organization [com.example]: (所属机构，例如com.wmzit)
+$ scala_version [2.12.2]: (scala版本，直接enter用默认值)
+$ play_version [2.6.0]: (play版本，直接enter用默认值)
+#+END_SRC
+
+* 使用SBT console
+
+- *加载SBT console*
+#+BEGIN_SRC shell
+在创建应用之后可以运行：
+$ cd my-first-app
+$ sbt
+提示符会成为：
+[my-first-app] $
+#+END_SRC
+
+- *获取帮助信息*
+#+BEGIN_SRC shell
+"help"命令会显示可用命令的基本帮助信息；还可以显示指定命令的信息：
+[my-first-app] $ help run
+#+END_SRC
+
+- *以开发模式运行服务器*
+#+BEGIN_SRC shell
+[my-first-app] $ run
+服务器启动之后可以用浏览器打开"http://localhost:9000"进行查看。
+停止服务器：在emacs的eshell中，按C-c C-c。
+#+END_SRC
+
+- *编译*
+#+BEGIN_SRC shell
+[my-first-app] $ compile
+#+END_SRC
+
+- *运行测试*
+#+BEGIN_SRC shell
+[my-first-app] $ test
+#+END_SRC
+
+- *加载interactive console*
+#+BEGIN_SRC shell
+[my-first-app] $ console
+此命令会加载Scala interactive console。
+#+END_SRC
+
+- *调试*
+#+BEGIN_SRC shell
+$ sbt -jvm-debug 9999
+#+END_SRC
+
+- *使用SBT的特色功能*
+#+BEGIN_SRC shell
+例如SBT的triggered execution：
+[my-first-app] $ ~ compile
+每一次对源文件的修改都会触发编译操作，触发式编译。
+
+[my-first-app] $ ~ run
+在服务器以开发模式运行的时候，启用触发式编译。
+
+[my-first-app] $ ~ test
+每一次修改源文件之后即触发测试。
+
+[my-first-app] $ ~ testOnly com.acme.SomeClassTest
+每一次修改源文件之后即触发对com.acme.SomeClassTest的测试。
+#+END_SRC
+
+- *直接使用play命令*
+#+BEGIN_SRC shell
+可以在不进入console的情况下直接使用play的命令，例如：
+$ sbt run
+$ sbt ~run
+#+END_SRC
+
+* 常用命令
+
+** Mysql
+
+#+BEGIN_SRC shell
+启动/关闭/重启数据库服务：
+$ sudo mysql.server start/stop/restart
+
+修改root密码：
+$ set password for root@localhost = password('123');
+#+END_SRC
+
+#+BEGIN_SRC shell
+以root身份连接至本地数据库：
+$ mysql -u root -p 
+
+以root身份连接至本地数据库：
+$ mysql -h localhost -u root -p 
+
+连接远程数据库192.168.0.201，端口“3306”，用户名为“root”，密码“123”：
+$ mysql -h 192.168.0.201 -P 3306 -u root -p123 
+
+连接本地数据库，用户名为“root”，指定所连接的数据库为“test”：
+$ mysql -h localhost -u root -p123 -D test
+#+END_SRC
+
+#+BEGIN_SRC shell
+显示数据库：
+mysql> show databases;
+
+创建数据库：
+mysql> create database test;
+
+使用数据库：
+mysql> use test;
+
+查看数据库表：
+mysql> show tables;
+
+删除数据库：
+mysql> drop database test;
+#+END_SRC
+
+#+BEGIN_SRC shell
+查看字符集：
+mysql> show variables like '%char%';
+
+修改字符集：
+mysql> set character_set_client = utf8
+mysql> set character_set_connection = utf8
+mysql> set character_set_database = utf8
+mysql> set character_set_results = utf8
+mysql> set character-set-server = utf8
+mysql> set character_set_system = utf8
+#+END_SRC
+
+* 配置
+
+- MySQL配置
+  创建一个my.cnf文件，并将其复制到/etc目录下。其中包括如下内容：
+  #+BEGIN_QUOTE
+  
+  #+END_QUOTE
+
+- Play数据库配置(MySQL)
+  1. 在项目根目录下创建lib目录，将JDBC Connector的jar包复制进去。
+  2. 在conf/application.conf的db{}段落加入：
+     #+BEGIN_QUOTE
+     # Default database configuration using MySQL database engine
+     # Connect to playdb as playdbuser
+     default.driver=com.mysql.jdbc.Driver
+     default.url="jdbc:mysql://localhost/dev"
+     default.username=root
+     default.password="Pa55word"
+     #+END_QUOTE
+     此处配置了一个名为default的数据源。
+  3. 在conf/application.conf的play.db{}段落中取消如下两行的注释：
+     #+BEGIN_QUOTE
+     config = "db"
+     default = "default"
+     #+END_QUOTE
+  4. 在项目根目录下的build.sbt中添加evolutions的依赖：libraryDependencies += evolutions
+  5. 在项目根目录下的build.sbt中添加cache的依赖：libraryDependencies += cache
+
+- 启用Ebean：
+  1. 在app目录下创建一个package：models；
+  2. 在iBetterCare/project/plugins.sbt中添加：addSbtPlugin("com.typesafe.sbt" % "sbt-play-ebean" % "3.0.0")；
+  3. 在iBetterCare/build.sbt中修改：lazy val root = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
+  4. 在conf/application.conf中添加：ebean.default = ["models.*"] 
+    #此操作为上面配置的使用MySQL的default数据源定一个了一个default Ebean server。
+  5. 在build.sbt中添加：playEbeanDebugLevel := 4
+
+- AKKA
+  1. 向conf/logback.xml中添加：<logger name="akka.actor" level="INFO" />
+  2. 在conf/application.conf中取消对log-config-on-start = true的注释
+
+- 语言设置
+  1. 在conf/application.conf中设置langs = [ "zh-cmn-Hans-CN", "en" ]
+
+- Test
+  + JUnit
+    1. 在根目录的build.sbt中添加依赖：libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test
+
+- 其他
+  + 在build.sbt中添加：fork in run := true
+  + 在build.sbt中添加：ivyLoggingLevel := UpdateLogging.Quiet，这会在console中只显示ivy的错误。
+
+
+
+
+
+
+
+
+检查项目dependencies的时候需要从网上下载jar包到"~/.ivy2/cache"，过程会十分缓慢。
+可以在项目的build.sbt中添加如下内容：
+updateOptions := updateOptions.value.withCachedResolution(true)
+

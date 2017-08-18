@@ -1,0 +1,736 @@
+#+OPTIONS: \n:t #换行不必输入两个
+#+OPTIONS: _:nil #禁用下划线转义
+#+OPTIONS: ^:nil
+
+#+TITLE: Git Handbook
+
+* Git安装与配置：
+
+** 安装
+
+#+BEGIN_EXAMPLE
+ $ brew install git #用homebrew安装git
+ $ git --version #查看git版本
+ $ git --status #查看git状态
+#+END_EXAMPLE
+ 
+** 配置
+
+配置变量可以存放在以下三个不同的地方：
+ 1.  "/etc/gitconfig"文件：系统中对所有用户都普遍适用的配置。若使用git config命令时用--system选项，读写的就是这个文件。
+ 2. "~/.gitconfig"文件：用户目录下的配置文件只适用于该用户。若使用git config命令时用--global选项，读写的就是这个文件。
+ 3. 当前项目的Git目录中的配置文件，也就是工作目录中的".git/config"文件：这里的配置仅仅针对当前项目有效。每一个级别的配置都会覆盖上层的相同配置，所以".git/config"里的配置会覆盖"/etc/gitconfig"中的同名变量。
+ 4. 在Windows系统上Git会找寻用户主目录下的".gitconfig"文件。主目录即$HOME变量指定的目录，一般都是 C:\Documents and Settings\$USER。 
+
+** 用户信息
+
+#+BEGIN_EXAMPLE
+ $ git config --global user.name "Jasondf"
+ $ git config --global user.email jason.daifei@gmail.com
+#+END_EXAMPLE
+
+如果用了--global选项，那么更改的配置文件就是位于你用户主目录下的那个，以后你所有的项目都会默认使用这里配置的用户信息。如果要在某个特定的项目中使用其他名字或者电邮，只要去掉--global选项重新配置即可，新的设定保存在当前项目的".git/config"文件里。
+
+** 指定文本编辑器
+
+Git需要你输入一些额外消息的时候，会自动调用一个外部文本编辑器给你用。默认会使用操作系统指定的默认编辑器。
+
+#+BEGIN_EXAMPLE
+ $ git config --global core.editor emacs
+#+END_EXAMPLE
+
+** 差异分析工具
+
+还有一个比较常用的是，在解决合并冲突时使用哪种差异分析工具。比如要改用vimdiff的话：
+
+#+BEGIN_EXAMPLE
+ $ git config --global merge.tool vimdiff
+#+END_EXAMPLE
+
+Git可以理解kdiff3，tkdiff，meld，xxdiff，emerge，vimdiff，gvimdiff，ecmerge，和 opendiff 等合并工具的输出信息。
+
+** 查看配置信息
+
+要检查已有的配置信息，可以使用：
+
+#+BEGIN_EXAMPLE
+ $ git config --list
+#+END_EXAMPLE
+
+也可以直接查阅某个环境变量的设定，只要把特定的名字跟在后面即可，像这样：
+
+#+BEGIN_EXAMPLE
+ $ git config user.name
+ Jasondf
+#+END_EXAMPLE
+
+** 获取帮助
+
+方法有三：
+
+#+BEGIN_EXAMPLE
+ $ git help <verb>
+ $ git <verb> --help
+ $ man git-<verb>
+#+END_EXAMPLE
+
+比如，要学习config命令可以怎么用，运行：
+
+#+BEGIN_EXAMPLE
+ $ git help config
+#+END_EXAMPLE
+
+* ssh
+
+** 生成ssh
+
+*注意：*与ssh相关的命令都要用操作系统的原生命令，不要用自己通过homebrew之类的包管理软件所添加的。
+
+#+BEGIN_EXAMPLE
+ $ ssh-keygen -t rsa -b 4096 -C "jason.daifei@icloud.com"
+ Generating public/private rsa key pair.
+ Enter file in which to save the key (/Users/jason/.ssh/id_rsa):[直接enter]
+ Created directory '/Users/jason/.ssh'.
+ Enter passphrase (empty for no passphrase): [设置此key的密码]
+ Enter same passphrase again:[再次确认密码]
+ Your identification has been saved in /Users/jason/.ssh/id_rsa.
+ Your public key has been saved in /Users/jason/.ssh/id_rsa.pub.
+ The key fingerprint is:
+ SHA256:882GZfRcX6u+Hd5a3ZngE9Z27C7PI0MJ4amQ8pK6kqw jason.daifei@icloud.com
+ The key's randomart image is:
+ +---[RSA 4096]----+
+ |                 |
+ |           .     |
+ |        . . +   o|
+ |     . o   = o.o+|
+ |      + S . +++++|
+ |     o . + *oo=.*|
+ |. . . .   o =+ +=|
+ | + .       ..o==o|
+ |E ...        o=**|
+ +----[SHA256]-----+
+#+END_EXAMPLE
+
+** 将SSH key加入ssh-agent
+
+1. 在后台启动ssh-agent：
+
+#+BEGIN_SRC shell
+ $ eval "$(ssh-agent -s)" #注意，此命令在emacs的eshell中执行会报错。
+#+END_SRC
+
+2. 如果是macOS Sierra 10.12.2或是更新的系统，需要修改"~/.ssh/config"文件以自动向ssh-agent加载密匙并将密码存储在keychain中。
+
+#+BEGIN_SRC text
+ Host *
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_rsa
+#+END_SRC
+
+3. 将SSH私有密匙添加至ssh-agent并将密码存储至keychain。
+
+#+BEGIN_SRC shell
+ $ ssh-add -K ~/.ssh/id_rsa
+#+END_SRC
+
+** 向代码托管网站中中添加ssh
+
+在复制公有密匙内容的时候，为防止有的编辑器自动向文档内容中添加其他内容，可以使用下面的命令将密匙内容复制到剪贴板。
+
+#+BEGIN_SRC shell
+ $ pbcopy < ~/.ssh/id_rsa.pub
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+ github.com:
+ Edit profile -> SSH keys -> Add SSH key
+ title: jasonMBP
+ 将id_rsa.pub中的内容复制进去。
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+ bitbucket.org:
+ Bitbucket settings -> SSH keys -> Add key
+#+END_EXAMPLE
+
+** 测试连接
+
+#+BEGIN_EXAMPLE
+ github.com:
+ $ ssh -T git@github.com
+#+END_EXAMPLE
+
+如果出现"Hi Jasondf!..."表示已经连接成功。
+
+#+BEGIN_EXAMPLE
+ bitbucket.org:
+ $ ssh -T git@bitbucket.org
+#+END_EXAMPLE
+
+如果出现"logged in as jasondf."表示连接成功。
+
+** 如果连接报错
+
+如果出现错误提示：Permission denied (publickey).因为新生成的key不能加入ssh就会导致连接不上。
+
+#+BEGIN_EXAMPLE
+1. 先输入$ ssh-agent，再输入$ ssh-add ~/.ssh/id_rsa，这样就可以了。
+2. 如果输入$ ssh-add ~/.ssh/id_rsa 命令后出现报错Could not open a connection to your authentication agent.
+ 解决方法是key用Git Gui的ssh工具生成，这样生成的时候key就直接保存在ssh中了，不需要再ssh-add命令加入了，其它的user，token等配置都用命令行来做。
+3. 最好检查一下在你复制id_rsa.pub文件的内容时有没有产生多余的空格或空行，有些编辑器会帮你添加这些的。
+#+END_EXAMPLE
+
+* Git操作
+
+** git远程操作命令讲解
+
+[[file:./gitremoteops.jpg]]
+
+*** git clone
+
+远程操作的第一步，通常是从远程主机克隆一个版本库，这时就要用到git clone命令。
+
+#+BEGIN_EXAMPLE
+ $ git clone <版本库的网址>
+#+END_EXAMPLE
+
+例如，克隆iBetterCare的版本库：
+
+#+BEGIN_EXAMPLE
+ $ git clone git@bitbucket.org:jasondf/ibettercare.git
+#+END_EXAMPLE
+
+该命令会在本地主机生成一个目录，与远程主机的版本库同名。如果要指定不同的目录名，可以将目录名作为git clone命令的第二个参数。
+
+#+BEGIN_EXAMPLE
+ $ git clone <版本库的网址> <本地目录名>
+#+END_EXAMPLE
+
+*** git remote
+
+为了便于管理，Git要求每个远程主机都必须指定一个主机名。git remote命令就用于管理主机名。
+不带选项的时候，git remote命令列出所有远程主机：
+
+#+BEGIN_EXAMPLE
+ $ git remote
+ origin
+#+END_EXAMPLE
+
+使用-v选项，可以参看远程主机的网址：
+
+#+BEGIN_EXAMPLE
+ $ git remote -v
+ origin	ssh://git@bitbucket.org/jasondf/ibettercare.git (fetch)
+ origin	ssh://git@bitbucket.org/jasondf/ibettercare.git (push)
+#+END_EXAMPLE
+
+上面命令表示，当前只有一台远程主机，叫做origin，以及它的网址。
+克隆版本库的时候，所使用的远程主机自动被Git命名为origin。如果想用其他的主机名，需要用git clone命令的-o选项指定:
+
+#+BEGIN_EXAMPLE
+ $ git clone -o jQuery https://github.com/jquery/jquery.git
+ $ git remote
+ jQuery
+#+END_EXAMPLE
+
+上面命令表示，克隆的时候，指定远程主机叫做jQuery。
+git remote show命令加上主机名，可以查看该主机的详细信息:
+
+#+BEGIN_EXAMPLE
+ $ git remote show <主机名>
+#+END_EXAMPLE
+
+git remote add命令用于添加远程主机:
+
+#+BEGIN_EXAMPLE
+ $ git remote add <主机名> <网址>
+#+END_EXAMPLE
+
+git remote rm命令用于删除远程主机:
+
+#+BEGIN_EXAMPLE
+ $ git remote rm <主机名>
+#+END_EXAMPLE
+
+git remote rename命令用于远程主机的改名:
+
+#+BEGIN_EXAMPLE
+ $ git remote rename <原主机名> <新主机名>
+#+END_EXAMPLE
+
+*** git fetch
+
+一旦远程主机的版本库有了更新（Git术语叫做commit），需要将这些更新取回本地，这时就要用到git fetch命令。
+
+#+BEGIN_EXAMPLE
+ $ git fetch <远程主机名>
+#+END_EXAMPLE
+
+上面命令将某个远程主机的更新，全部取回本地。
+git fetch命令通常用来查看其他人的进程，因为它取回的代码对你本地的开发代码没有影响。
+默认情况下，git fetch取回所有分支（branch）的更新。如果只想取回特定分支的更新，可以指定分支名：
+
+#+BEGIN_EXAMPLE
+ $ git fetch <远程主机名> <分支名>
+#+END_EXAMPLE
+
+比如，取回origin主机的master分支：
+
+#+BEGIN_EXAMPLE
+ $ git fetch origin master
+#+END_EXAMPLE
+
+所取回的更新，在本地主机上要用"远程主机名/分支名"的形式读取。比如origin主机的master，就要用origin/master读取。
+git branch命令的-r选项，可以用来查看远程分支，-a选项查看所有分支。
+
+#+BEGIN_EXAMPLE
+ $ git branch -r
+ origin/master
+ $ git branch -a
+ * master
+ remotes/origin/master
+#+END_EXAMPLE
+
+上面命令表示，本地主机的当前分支是master，远程分支是origin/master。
+取回远程主机的更新以后，可以在它的基础上，使用git checkout命令创建一个新的分支：
+
+#+BEGIN_EXAMPLE
+ $ git checkout -b newBrach origin/master
+#+END_EXAMPLE
+
+上面命令表示，在origin/master的基础上，创建一个新分支。
+此外，也可以使用git merge命令或者git rebase命令，在本地分支上合并远程分支。
+
+#+BEGIN_EXAMPLE
+ $ git merge origin/master
+ # 或者
+ $ git rebase origin/master
+#+END_EXAMPLE
+
+上面命令表示在当前分支上，合并origin/master。
+
+*** git pull
+
+git pull命令的作用是，取回远程主机某个分支的更新，再与本地的指定分支合并。命令格式为：
+
+#+BEGIN_EXAMPLE
+ $ git pull <远程主机名> <远程分支名>:<本地分支名>
+#+END_EXAMPLE
+
+比如，取回origin主机的next分支，与本地的master分支合并，需要写成下面这样：
+
+#+BEGIN_EXAMPLE
+  $ git pull origin next:master
+#+END_EXAMPLE
+
+如果远程分支是与当前分支合并，则冒号后面的部分可以省略：
+
+#+BEGIN_EXAMPLE
+  $ git pull origin next
+#+END_EXAMPLE
+
+上面命令表示，取回origin/next分支，再与当前分支合并。实质上，这等同于先做git fetch，再做git merge：
+
+#+BEGIN_EXAMPLE
+  $ git fetch origin
+  $ git merge origin/next
+#+END_EXAMPLE
+
+在某些场合，Git会自动在本地分支与远程分支之间，建立一种追踪关系（tracking）。比如，在git clone的时候，所有本地分支默认与远程主机的同名分支，建立追踪关系，也就是说，本地的master分支自动"追踪"origin/master分支。
+Git也允许手动建立追踪关系：
+
+#+BEGIN_EXAMPLE
+  $ git branch --set-upstream master origin/next
+#+END_EXAMPLE
+
+上面命令指定master分支追踪origin/next分支。
+如果当前分支与远程分支存在追踪关系，git pull就可以省略远程分支名：
+
+#+BEGIN_EXAMPLE
+  $ git pull origin
+#+END_EXAMPLE
+
+上面命令表示，本地的当前分支自动与对应的origin主机"追踪分支"（remote-tracking branch）进行合并。
+如果当前分支只有一个追踪分支，连远程主机名都可以省略：
+
+#+BEGIN_EXAMPLE
+  $ git pull
+#+END_EXAMPLE
+
+上面命令表示，当前分支自动与唯一一个追踪分支进行合并。
+如果合并需要采用rebase模式，可以使用--rebase选项：
+
+#+BEGIN_EXAMPLE
+  $ git pull --rebase <远程主机名> <远程分支名>:<本地分支名>
+#+END_EXAMPLE
+
+如果远程主机删除了某个分支，默认情况下，git pull 不会在拉取远程分支的时候，删除对应的本地分支。这是为了防止由于其他人操作了远程主机，导致git pull不知不觉删除了本地分支。
+但是，你可以改变这个行为，加上参数 -p 就会在本地删除远程已经删除的分支：
+
+#+BEGIN_EXAMPLE
+  $ git pull -p
+  # 等同于下面的命令
+  $ git fetch --prune origin 
+  $ git fetch -p
+#+END_EXAMPLE
+
+*** git push
+
+git push命令用于将本地分支的更新，推送到远程主机。它的格式与git pull命令相仿。
+
+#+BEGIN_EXAMPLE
+ $ git push <远程主机名> <本地分支名>:<远程分支名>
+#+END_EXAMPLE
+
+注意，分支推送顺序的写法是<来源地>:<目的地>，所以git pull是<远程分支>:<本地分支>，而git push是<本地分支>:<远程分支>。
+如果省略远程分支名，则表示将本地分支推送与之存在"追踪关系"的远程分支（通常两者同名），如果该远程分支不存在，则会被新建：
+
+#+BEGIN_EXAMPLE
+ $ git push origin master
+#+END_EXAMPLE
+
+上面命令表示，将本地的master分支推送到origin主机的master分支。如果后者不存在，则会被新建。
+如果省略本地分支名，则表示删除指定的远程分支，因为这等同于推送一个空的本地分支到远程分支：
+
+#+BEGIN_EXAMPLE
+ $ git push origin :master
+ # 等同于
+ $ git push origin --delete master
+#+END_EXAMPLE
+
+上面命令表示删除origin主机的master分支。
+如果当前分支与远程分支之间存在追踪关系，则本地分支和远程分支都可以省略：
+
+#+BEGIN_EXAMPLE
+ $ git push origin
+#+END_EXAMPLE
+
+上面命令表示，将当前分支推送到origin主机的对应分支。
+如果当前分支只有一个追踪分支，那么主机名都可以省略：
+
+#+BEGIN_EXAMPLE
+ $ git push
+#+END_EXAMPLE
+
+如果当前分支与多个主机存在追踪关系，则可以使用-u选项指定一个默认主机，这样后面就可以不加任何参数使用git push：
+
+#+BEGIN_EXAMPLE
+ $ git push -u origin master
+#+END_EXAMPLE
+
+上面命令将本地的master分支推送到origin主机，同时指定origin为默认主机，后面就可以不加任何参数使用git push了。
+不带任何参数的git push，默认只推送当前分支，这叫做simple方式。此外，还有一种matching方式，会推送所有有对应的远程分支的本地分支。Git 2.0版本之前，默认采用matching方法，现在改为默认采用simple方式。如果要修改这个设置，可以采用git config命令：
+
+#+BEGIN_EXAMPLE
+ $ git config --global push.default matching
+ # 或者
+ $ git config --global push.default simple
+#+END_EXAMPLE
+
+还有一种情况，就是不管是否存在对应的远程分支，将本地的所有分支都推送到远程主机，这时需要使用--all选项：
+
+#+BEGIN_EXAMPLE
+ $ git push --all origin
+#+END_EXAMPLE
+
+上面命令表示，将所有本地分支都推送到origin主机。
+如果远程主机的版本比本地版本更新，推送时Git会报错，要求先在本地做git pull合并差异，然后再推送到远程主机。这时，如果你一定要推送，可以使用--force选项：
+
+#+BEGIN_EXAMPLE
+ $ git push --force origin 
+#+END_EXAMPLE
+
+上面命令使用--force选项，结果导致远程主机上更新的版本被覆盖。除非你很确定要这样做，否则应该尽量避免使用--force选项。
+最后，git push不会推送标签（tag），除非使用--tags选项：
+
+#+BEGIN_EXAMPLE
+ $ git push origin --tags
+#+END_EXAMPLE
+
+** 实际应用示例
+
+本文以本地的"~/projects/iBetterCare"项目为示例。
+
+- 如果在代码托管网站(github.com或者bitbucket.org)中还没有相对应的repository，则需要创建一个名称为iBetterCare的repository；
+
+- 进入项目根目录并初始化本地仓库:
+  
+  #+BEGIN_EXAMPLE
+  $ cd ~/projects/iBetterCare 
+  $ git init
+  #+END_EXAMPLE
+
+  此时在iBetterCare文件夹中会新建一个".git"目录。
+
+- 连接远程repository并创建一个叫origin的别名：(在两个网站中的用户名都是"jasondf")
+
+  #+BEGIN_EXAMPLE
+  github.com：
+  $ git remote add origin git@github.com:jasondf/iBetterCare.git
+  bitbucket.org：
+  $ git remote add origin git@bitbucket.org:jasondf/ibettercare.git
+  #+END_EXAMPLE
+
+- 如果需要先将远程repository的代码clone到本地： 
+
+  #+BEGIN_EXAMPLE
+  github.com:
+  $ git clone git@github.com:jasondf/ibettercare.git
+  bitbucket.org:
+  $ git clone git@bitbucket.org:jasondf/ibettercare.git
+  #+END_EXAMPLE
+
+- 如果需要将本地代码push至repository：
+
+  - 添加(stage)本地项目根目录，表示已经开始跟踪这个文件/目录了：
+
+    #+BEGIN_EXAMPLE
+    $ git add . 
+    #+END_EXAMPLE
+
+  - 添加所有的更改：
+
+    #+BEGIN_EXAMPLE
+    $ git add --all
+    #+END_EXAMPLE
+
+  - 提交要推送的内容及注释：
+
+    #+BEGIN_EXAMPLE
+    $ git commit -m 'initial commit' 
+    #+END_EXAMPLE
+
+  - 将本地仓库的内容推送到远端origin的master分支下：
+
+    #+BEGIN_EXAMPLE
+    $ git push -u origin master 
+    #+END_EXAMPLE
+
+PS,期间可以随时使用"git status"来查看状态。
+
+** 忽略一些文件，不push的方法
+
+在本地项目根目录下创建名称为".gitignore"的文件，写入不需要的文件夹名或文件，每个元素占一行即可。例如：
+
+#+BEGIN_EXAMPLE
+ *.[oa]
+ 告诉Git忽略所有以".o"或".a"结尾的文件。
+ 一般这类对象文件和存档文件都是编译过程中出现的，我们用不着跟踪它们的版本。
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+ *~
+ 告诉Git忽略所有以波浪符（~）结尾的文件，许多文本编辑软件（比如 Emacs）都用这样的文件名保存副本。
+ 此外，你可能还需要忽略log，tmp或者pid目录，以及自动生成的文档等等。
+ 要养成一开始就设置好".gitignore"文件的习惯，以免将来误提交这类无用的文件。
+#+END_EXAMPLE 
+
+#+BEGIN_EXAMPLE
+ "#"为注释，其后内容将被Git忽略
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+ *DS_Store
+ /**/*DS_Store
+ 忽略所有的.DS_Store文件
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+ *.a
+ 忽略所有 .a 结尾的文件
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+ !lib.a
+ 但lib.a除外
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+ /TODO
+ 仅仅忽略项目根目录下的TODO文件，不包括subdir/TODO
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+ build/
+ 忽略 build/ 目录下的所有文件
+#+END_EXAMPLE  
+
+#+BEGIN_EXAMPLE
+ doc/*.txt
+ 忽略 doc/notes.txt 但不包括 doc/server/arch.txt
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+ doc/**/*.txt
+ 忽略 doc/ 目录下所有扩展名为 txt 的文件
+#+END_EXAMPLE
+
+** 创建一个branch
+
+创建branch可以向还未做好提交准备的代码进行更改。在准备好让所有人知晓代码更改的时候，可以merge修改到repository，并且删除不再需要的branch。需要理解的是，branch只是用于commit操作的指针。创建一个branch的时候，Git只会创建一个新的指针，而不是把所有的文件和文件夹都新创建一遍。
+
+至项目根目录：
+
+#+BEGIN_EXAMPLE
+ $ cd ~/projects/iBetterCare 
+#+END_EXAMPLE
+
+创建一个分支：
+
+#+BEGIN_EXAMPLE
+ $ git branch developing
+#+END_EXAMPLE
+
+此时只是创建了一个developing branch，但是并没有将你切换至该branch。此时repository的历史没有发生改变。我们所得到的只是一个指向当前branch的指针。要想在新的branch上开始工作，则需要对想使用的branch进行检出。
+
+检出分支并开始使用：
+
+#+BEGIN_EXAMPLE
+ $ git checkout developing
+#+END_EXAMPLE
+
+此时会显示：Switched to branch 'developing'。如果用git status命令查看，会显示：On branch developing。
+对项目中的文件进行修改并保存。
+
+用git status查看状态：
+
+#+BEGIN_EXAMPLE
+On branch developing
+Changes not staged for commit:
+    (use "git add <file>..." to update what will be committed)
+    (use "git checkout -- <file>..." to discard changes in working directory)
+
+    modified:   app/models/BaseDataInit.java
+
+    no changes added to commit (use "git add" and/or "git commit -a")
+
+#+END_EXAMPLE
+
+注意第一行的"On branch developing"。在stage或是commit变更之前，总是要检查这一行，确保你要对其进行更改的branch已经被检出。
+
+添加文件(stage)：
+
+#+BEGIN_EXAMPLE
+ $ git add .
+#+END_EXAMPLE
+
+commit更改：
+
+#+BEGIN_EXAMPLE
+ $ git commit . -m 'making a change in a branch'
+ [developing dce46bc] making change in a branch
+ 1 file changed, 2 insertions(+)
+#+END_EXAMPLE
+
+现在可以将所做的修改merge到master分支了。
+
+** merge更改
+
+切换至master分支:
+
+#+BEGIN_EXAMPLE
+ $ git checkout master
+#+END_EXAMPLE
+
+将developing分支的更改merge到master分支:
+
+#+BEGIN_EXAMPLE
+ $ git merge developing
+#+END_EXAMPLE
+
+查看分支：
+
+#+BEGIN_EXAMPLE
+ 本地：$ git branch
+ 所有：$ git branch -a
+#+END_EXAMPLE
+
+如果以后不会使用developing分支的话，可以将其删除:
+
+#+BEGIN_EXAMPLE
+ 本地：
+ $ git branch -d developing (-D表示强制删除)
+ 远程：
+ $ git push origin :developing
+#+END_EXAMPLE
+
+现在本地的Local/master分支和远端的Origin/master分支是不一致的，可以通过git push origin master命令将本地master分支中的更改push到网站的master分支了。
+
+** 撤销未commit的更改
+
+撤销unstaged的更改(还没有使用git add进行stage操作)
+
+#+BEGIN_EXAMPLE
+  撤销项目中所有更改：
+     git checkout -- .
+  撤销指定文件的更改：
+     git checkout -- <file>...
+#+END_EXAMPLE
+
+撤销staged的更改(已经使用过git add进行了stage操作)
+
+#+BEGIN_EXAMPLE
+  1. git reset HEAD <file>...或者git reset HEAD .
+  2. git checkout -- . 或者git checkout -- <file>...
+#+END_EXAMPLE
+
+** 对已经commit过的数据进行修正
+
+
+
+
+** 冲突处理
+
+*** 查看变更
+
+#+BEGIN_SRC shell
+ $ git diff
+#+END_SRC
+
+*** stash
+
+开发人员常常遇到这种情况：花了几天时间一直在做一个新功能，已经改了差不多十几个文件，突然有一个bug需要紧急解决，然后给一个build测试组。之前基本上靠手动备份，费时且容易出错。
+git stash命令简而言之就是帮助开发人员暂时搁置当前已做的改动，倒退到改动前的状态，进行其他的必要操作（比如发布，或者解决一个bug，或者branch，等等），之后还可以重新载入之前搁置的改动。
+
+#+BEGIN_EXAMPLE
+1. 把所有的改动加到staging area。
+ $ git add .
+2. 搁置变更
+ $ git stash
+到这里，当前工作平台就回复到改动之前了。该干嘛干嘛。
+……
+3. 需要找回之前搁置的改动继续先前的工作了？
+ $ git stash apply
+4. 查看所有的搁置版本（可能搁置了很多次，最好不要这样，容易搞混）：
+ $ git stash list 
+5. 在出现一个搁置栈的情况下，比如如果你想找回栈中的第2个：
+ $ git stash apply stash@{1}
+6. 如果想找回第1个：
+ $ git stash pop
+7. 删除一个stash：
+ $ git stash drop <id>
+8. 删除所有stash：
+ $ git stash clear
+#+END_EXAMPLE
+
+** 疑难问题分析和解决
+
+#+BEGIN_EXAMPLE
+如果输入$ git remote add origin ssh://git@bitbucket.org/jasondf/ibettercare.git提示出错信息：fatal: remote origin already exists.
+   1) 先输入：$ git remote rm origin
+   2) 再输入：$ git remote add origin ssh://git@bitbucket.org/jasondf/ibettercare.git就不会报错了！
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+如果输入$ git push origin master提示出错信息：error:failed to push som refs to .......
+   1) 先输入$ git pull origin master 把远程服务器上的文件拉下来
+   2) 再输入$ git push origin master
+   3) 如果出现报错 fatal: Couldn't find remote ref master
+      或者fatal: 'origin' does not appear to be a git repository
+      以及fatal: Could not read from remote repository. 
+      则需要重新输入：$ git remote add origin ssh://git@bitbucket.org/jasondf/ibettercare.git
+#+END_EXAMPLE
+
+ 
+
