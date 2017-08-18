@@ -80,11 +80,11 @@ Git可以理解kdiff3，tkdiff，meld，xxdiff，emerge，vimdiff，gvimdiff，e
  $ git help config
 #+END_EXAMPLE
 
-* ssh
+* SSH
 
-** 生成ssh
+** 生成SSH密匙对
 
-*注意：*与ssh相关的命令都要用操作系统的原生命令，不要用自己通过homebrew之类的包管理软件所添加的。
+*注意：与ssh相关的命令都要用操作系统的原生命令，不要用通过homebrew之类的包管理软件所安装的。*
 
 #+BEGIN_EXAMPLE
  $ ssh-keygen -t rsa -b 4096 -C "jason.daifei@icloud.com"
@@ -111,30 +111,31 @@ Git可以理解kdiff3，tkdiff，meld，xxdiff，emerge，vimdiff，gvimdiff，e
  +----[SHA256]-----+
 #+END_EXAMPLE
 
-** 将SSH key加入ssh-agent
+** 将SSH私有密匙加入ssh-agent
 
-1. 在后台启动ssh-agent：
+- 在后台启动ssh-agent：
 
-#+BEGIN_SRC shell
- $ eval "$(ssh-agent -s)" #注意，此命令在emacs的eshell中执行会报错。
-#+END_SRC
+  #+BEGIN_SRC shell
+  $ eval "$(ssh-agent -s)" 
+  #注意，此命令在emacs的eshell中执行会报错，需要在Terminal中执行。
+  #+END_SRC
 
-2. 如果是macOS Sierra 10.12.2或是更新的系统，需要修改"~/.ssh/config"文件以自动向ssh-agent加载密匙并将密码存储在keychain中。
+- 如果是macOS Sierra 10.12.2或是更新的系统，需要修改"~/.ssh/config"文件以自动向ssh-agent加载密匙并将密码存储在keychain中。
 
-#+BEGIN_SRC text
- Host *
-  AddKeysToAgent yes
-  UseKeychain yes
-  IdentityFile ~/.ssh/id_rsa
-#+END_SRC
+  #+BEGIN_SRC text
+  Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_rsa
+  #+END_SRC
 
-3. 将SSH私有密匙添加至ssh-agent并将密码存储至keychain。
+- 将SSH私有密匙添加至ssh-agent并将密码存储至keychain。
 
-#+BEGIN_SRC shell
- $ ssh-add -K ~/.ssh/id_rsa
-#+END_SRC
+  #+BEGIN_SRC shell
+  $ ssh-add -K ~/.ssh/id_rsa
+  #+END_SRC
 
-** 向代码托管网站中中添加ssh
+** 向代码托管网站添加SSH公有密匙
 
 在复制公有密匙内容的时候，为防止有的编辑器自动向文档内容中添加其他内容，可以使用下面的命令将密匙内容复制到剪贴板。
 
@@ -145,13 +146,10 @@ Git可以理解kdiff3，tkdiff，meld，xxdiff，emerge，vimdiff，gvimdiff，e
 #+BEGIN_EXAMPLE
  github.com:
  Edit profile -> SSH keys -> Add SSH key
- title: jasonMBP
- 将id_rsa.pub中的内容复制进去。
-#+END_EXAMPLE
-
-#+BEGIN_EXAMPLE
  bitbucket.org:
  Bitbucket settings -> SSH keys -> Add key
+ title: jasonMBP
+ 将id_rsa.pub中的内容复制进去。
 #+END_EXAMPLE
 
 ** 测试连接
@@ -454,7 +452,7 @@ git push命令用于将本地分支的更新，推送到远程主机。它的格
 
 - 如果在代码托管网站(github.com或者bitbucket.org)中还没有相对应的repository，则需要创建一个名称为iBetterCare的repository；
 
-- 进入项目根目录并初始化本地仓库:
+- 进入本地根目录并初始化本地仓库:
   
   #+BEGIN_EXAMPLE
   $ cd ~/projects/iBetterCare 
