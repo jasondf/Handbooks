@@ -450,7 +450,7 @@ git push命令用于将本地分支的更新，推送到远程主机。它的格
 
 ** 实际应用示例
 
-本文以本地的"~/projects/iBetterCare"项目为示例。
+本章节以本地的"~/projects/iBetterCare"项目为示例。
 
 - 如果在代码托管网站(github.com或者bitbucket.org)中还没有相对应的repository，则需要创建一个名称为iBetterCare的repository；
 
@@ -468,7 +468,7 @@ git push命令用于将本地分支的更新，推送到远程主机。它的格
   #+BEGIN_EXAMPLE
   github.com：
   $ git remote add origin git@github.com:jasondf/iBetterCare.git
-  bitbucket.org：
+  bitbucket.org：(不区分大小写)
   $ git remote add origin git@bitbucket.org:jasondf/ibettercare.git
   #+END_EXAMPLE
 
@@ -476,7 +476,7 @@ git push命令用于将本地分支的更新，推送到远程主机。它的格
 
   #+BEGIN_EXAMPLE
   github.com:
-  $ git clone git@github.com:jasondf/ibettercare.git
+  $ git clone git@github.com:jasondf/iBetterCare.git
   bitbucket.org:
   $ git clone git@bitbucket.org:jasondf/ibettercare.git
   #+END_EXAMPLE
