@@ -116,6 +116,13 @@ TO BE DONE
  | C-x 5 0    | delete-frame           | 关闭当前frame          |
  | C-c <left> | winner-undo            | 回到上一个窗口布局设置 |
 
+- *字体操作*
+ | Key              | Command Name      | Purpose            |
+ |------------------+-------------------+--------------------|
+ | C-x C-+或C-x C-= | text-scale-adjust | 增大字体尺寸       |
+ | C-x C--          | text-scale-adjust | 缩小字体尺寸       |
+ | C-x C-0          | text-scale-adjust | 重设至默认字体尺寸 |
+
 *** Emacs的原则
 
 - *所有东西都是命令*
