@@ -158,6 +158,8 @@ mysql> set character-set-server = utf8
 
 [mysqld]
 character_set_server=utf8
+
+记得要chmod 664 my.cnf
 #+END_EXAMPLE
 
 * 配置
