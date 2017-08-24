@@ -149,13 +149,16 @@ mysql> drop database test;
 mysql> show variables like '%char%';
 
 修改字符集：
-mysql> set character_set_client = utf8
-mysql> set character_set_connection = utf8
-mysql> set character_set_database = utf8
-mysql> set character_set_results = utf8
 mysql> set character-set-server = utf8
-mysql> set character_set_system = utf8
 #+END_SRC
+
+#+BEGIN_EXAMPLE
+永久修改字符集设置：
+首先停止mysql服务，然后在/etc目录中创建文件my.cnf，再向其中添加如下内容：
+
+[mysqld]
+character_set_server=utf8
+#+END_EXAMPLE
 
 * 配置
 
