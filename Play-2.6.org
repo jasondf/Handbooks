@@ -216,11 +216,66 @@ character_set_server=utf8
 
 
 
-
-
-
-
 检查项目dependencies的时候需要从网上下载jar包到"~/.ivy2/cache"，过程会十分缓慢。
 可以在项目的build.sbt中添加如下内容：
 updateOptions := updateOptions.value.withCachedResolution(true)
+
+* Ebean
+
+** 查询
+
+有如下的两个类：User和Post
+
+#+BEGIN_SRC java
+  @Entity
+  public class User extends Model {
+    @Id
+    public Long id;
+    public String firstName;
+    [...]
+    @OneToMany(mappedBy = "owner")
+    public List<Post> posts;
+
+    public static final Finder<Long, User> find = new Finder<>(User.class);
+    [...]
+  }
+#+END_SRC
+
+#+BEGIN_SRC java
+  @Entity
+  public class Post extends Model {
+    @Id
+    public Long id;
+    public String name;
+    public String condition;
+    [...]
+    @ManyToOne
+    public User owner;
+    [...]
+  }
+#+END_SRC
+
+以下方法查询结果为：all "user" records which have "post" records in "new" condition.
+
+#+BEGIN_SRC java
+  List<User> users = User.find.select("*")
+                              .fetch("posts")
+                              .where()
+                              .eq("posts.condition", "new")
+                              .findList();
+#+END_SRC
+
+注意：在User.find.query().where().eq()...格式的语句中是无法使用fetch()的。另一种使用fetch()的方法是：
+
+#+BEGIN_SRC java
+  List<User> users = Ebean.find(User.class).fetch()...;
+#+END_SRC
+
+
+
+
+
+
+
+
 
