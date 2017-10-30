@@ -1929,11 +1929,8 @@ org支持嵌入html标记，例如可以在table的单元格中加入“@@html:<
 
 
 
-
-
-
-
 * Neotree
+
    (kbd "TAB")     ('neo-open-dir)
    (kbd "RET")     ('neo-open-dir)
    (kbd "|")       ('neo-open-file-vertical-split)
@@ -1958,7 +1955,6 @@ org支持嵌入html标记，例如可以在table的单元格中加入“@@html:<
    (kbd "C-c C-f") ('find-file-other-window)
    (kbd "C-c C-c") ('neotree-change-root)
    (kbd "C-c c")   ('neotree-dir)
- 
    (kbd "C-c C-n") ('neotree-create-node)
    (kbd "C-c C-d") ('neotree-delete-node)
    (kbd "C-c C-r") ('neotree-rename-node)
@@ -1966,6 +1962,7 @@ org支持嵌入html标记，例如可以在table的单元格中加入“@@html:<
 
 
 * WEB-MODE
+
    ("a/" . "<a href=\"|\"></a>")
    ("b/" . "<table><tbody><tr><td>|</td><td></td></tr></tbody></table>")
    ("c/" . "<div class=\"|\"></div>")
@@ -1988,6 +1985,62 @@ org支持嵌入html标记，例如可以在table的单元格中加入“@@html:<
    ("2/" . "<h2>|</h2>")
    ("3/" . "<h3>|</h3>")
    ("?/" . "<?php | ?>")
+
+* Paredit
+
+** 分割和连接(split & join)
+
+将一个表分割为两个表，或者将一个字符串分割为两个字符串，只需在要分割的地方按下"M-S"。
+
+#+BEGIN_EXAMPLE
+(helloworld) ;将光标放在world前，按下"M-S"，原表达式会被分割为：
+(hello) (world)
+"helloworld" ;将光标放在world前，按下"M-S"，原字符串会被分割为：
+"hello" "world"
+#+END_EXAMPLE
+连接的快捷键是"M-J"，使用方法与上例类似。
+
+** 吞吐S表达式(Barfage & Slurpage)
+
+这个操作简直可以算作Paredit的精髓！吞掉右边的表达式：C-)，吐出来：C-}。相对应的，吞掉左边的表达式：C-(，吐出来：C-{。
+
+#+BEGIN_EXAMPLE
+(foo bar (baz) quux zot)
+;吞：把光标放在(baz)里面，先吞右边'C-)'，再吞左边'C-('：
+(foo bar (baz quux) zot)
+(foo (bar baz quux) zot)
+;吐：把光标放在baz上，先吐左边'C-{'，再吐右边'C-}'：
+(foo bar (baz quux) zot)
+(foo bar (baz) quux zot)
+#+END_EXAMPLE
+
+** 提升S表达式
+
+可以理解为：用子表达式代替父表达式，或者将子表达式的内容直接附加至父表达式。快捷键为'M-r'。
+
+#+BEGIN_EXAMPLE
+(foo bar (baz) quux zot) ;将光标放在baz的开始括号位置按'M-r'：
+(baz)
+(foo bar (baz) quux zot) ;将光标放在baz的字母上按'M-r'：
+(foo bar baz quux zot)
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+(foo (let ((x 5))
+       (sqrt n)) bar) ;将光标放在sqrt的开始括号位置按'M-r'：
+(foo (sqrt n) bar)
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+(foo (let ((x 5))
+       (sqrt n)) bar) ;将光标放在sqrt的字母位置按'M-r'：
+(foo (let ((x 5))
+       sqrt) bar)
+#+END_EXAMPLE
+
+
+
+
 
 
 
