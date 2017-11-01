@@ -510,6 +510,7 @@ PS,期间可以随时使用"git status"来查看状态。
 *** 可能出现的问题
 
 - 如果在远端创建仓库的时候做了修改，比如添加了readme.md文件，那么直接push会失败："Updates were rejected because the tip of your current branch is behind its remote counterpart."。并且git会提示你先做pull操作，但是做git pull origin master的时候会提示："fatal: refusing to merge unrelated histories"。解决办法：
+
   #+BEGIN_SRC shell
   $ git pull origin master --allow-unrelated-histories
   ... add and commit here ...
