@@ -507,6 +507,15 @@ git push命令用于将本地分支的更新，推送到远程主机。它的格
 
 PS,期间可以随时使用"git status"来查看状态。
 
+*** 可能出现的问题
+
+- 如果在远端创建仓库的时候做了修改，比如添加了readme.md文件，那么直接push会失败："Updates were rejected because the tip of your current branch is behind its remote counterpart."。并且git会提示你先做pull操作，但是做git pull origin master的时候会提示："fatal: refusing to merge unrelated histories"。解决办法：
+  #+BEGIN_SRC shell
+  $ git pull origin master --allow-unrelated-histories
+  ... add and commit here ...
+  $ git push origin master
+  #+END_SRC
+
 ** 忽略一些文件，不push的方法
 
 在本地项目根目录下创建名称为".gitignore"的文件，写入不需要的文件夹名或文件，每个元素占一行即可。例如：
