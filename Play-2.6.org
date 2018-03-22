@@ -4,7 +4,7 @@ Nursing Job Management: caregiver management, job dispatch, financial settlement
 
 * 开发环境
 
-Mac OSX 10.11.6
+Mac OSX 10.13.3
 MySQL 5.7.18
 JDK 1.8
 JDBC Connector 5.1.42
@@ -113,6 +113,20 @@ $ sbt -jvm-debug 9999
 $ sbt run
 $ sbt ~run
 #+END_SRC
+
+
+* Intellij Debug
+
+1. 至项目根目录运行：
+   #+BEGIN_SRC shell
+   $ sbt run -jvm-debug 9999
+   #+END_SRC
+2. 在Intellij中选择菜单"Run" -> "Edit Configurations..."；
+3. 在被激活的"Run/Debug Configurations"界面里点击左上方的"Add New Configuration"按钮，即"+"；
+4. 在弹出的下拉列表中选择"Remote"；
+5. 在界面右侧输入此配置的名称，例如：crud-debug；然后在"Configuration"页的"Settings"栏下指定端口号Port：9999；
+6. 之后就可以在程序中设置断点并调试了。
+
 
 * 常用命令
 
